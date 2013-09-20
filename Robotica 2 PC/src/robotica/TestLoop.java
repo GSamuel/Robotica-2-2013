@@ -13,5 +13,6 @@ public class TestLoop extends Loop
 	{
 		System.out.println(this.getTotalTicks());
 	}
+	
 
 }
