@@ -1,11 +1,16 @@
+import robotica.Loop;
+import robotica.TestLoop;
 
-public class MainPC {
+public class MainPC
+{
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		System.out.println("Gideon");
+	public static void main(String[] args)
+	{
+		Loop loop = new TestLoop(1000);
+		loop.start();
 	}
 
 }
