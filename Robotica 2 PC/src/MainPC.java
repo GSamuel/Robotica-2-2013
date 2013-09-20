@@ -6,7 +6,6 @@ public class MainPC {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Gideon");
-
 	}
 
 }
