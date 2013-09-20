@@ -5,7 +5,7 @@ public class MainPC {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("hoi");
+		System.out.println("Guy");
 
 	}
 
