@@ -11,7 +11,12 @@ public class TestLoop extends Loop
 	@Override
 	public void loop()
 	{
-		System.out.println(this.getTotalTicks());
+		System.out.println(getTotalTicks());
+		if(getTotalTicks() >=10)
+		{
+			System.out.println("opnieuw");
+			reset();
+		}
 	}
 
 }
