@@ -1,6 +1,9 @@
-import lejos.nxt.Button;
-import lejos.nxt.Motor;
+import robotica.Loop;
+import robotica.TestLoop;
 
+/*
+ * Main voor de NXT. Koppel eerst de NXT brick aan via USB en run als Lejos application. 
+ */
 
 public class MainNXT {
 
@@ -9,11 +12,16 @@ public class MainNXT {
 	 * @throws InterruptedException 
 	 */
 	public static void main(String[] args) throws InterruptedException {
-		
 
+		new StopProgram().start();
+		
+		Loop loop = new TestLoop(1000);
+		loop.start();
+
+		
+		/*
 		System.out.println("press button");
 		Button.waitForAnyPress();
-		//new StopProgram().start();
 		
 		
 		
@@ -23,6 +31,8 @@ public class MainNXT {
 		Motor.A.backward();
 		Motor.A.setSpeed(1000);
 		Button.waitForAnyPress();
+		*/
+		
 		/*
 		TouchSensor touch1, touch2;
 		touch1 = new TouchSensor(SensorPort.S1);
@@ -35,6 +45,8 @@ public class MainNXT {
 			LCD.drawString(""+touch2.isPressed(), 0,1);
 			Thread.sleep(100);
 		}*/
+		
+
 		
 	}
 	
