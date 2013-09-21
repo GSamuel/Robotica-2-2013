@@ -12,7 +12,7 @@ public class TestLoop extends Loop
 	public void loop()
 	{
 		System.out.println(getTotalTicks());
-		if(getTotalTicks() >=10)
+		if (getTotalTicks() >= 10)
 		{
 			System.out.println("opnieuw");
 			reset();
