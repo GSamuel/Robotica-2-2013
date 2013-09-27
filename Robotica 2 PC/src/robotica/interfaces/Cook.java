@@ -1,6 +1,14 @@
 package robotica.interfaces;
 
-public interface Cook
+import robotica.cook.CookState;
+import robotica.cook.PreparingFoodState;
+
+public class Cook
 {
-	public void receiveOrder();
+	CookState preparingFoodState;
+
+	public Cook()
+	{
+		preparingFoodState = new PreparingFoodState(this);
+	}
 }
