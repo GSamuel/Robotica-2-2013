@@ -31,9 +31,10 @@ public abstract class Agent
 		}
 	}
 
-	public void setLocalID(int id)
+	public Agent setLocalID(int id)
 	{
 		localID = id;
+		return this;
 	}
 
 	public int getID()
