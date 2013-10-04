@@ -21,7 +21,7 @@ public class MainConnection
 		{
 			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 			nxtInfo = nxtComm.search(null);
-			if (nxtInfo.length > 0)
+			if (nxtInfo.length > 0) 
 			{
 				nxtComm.open(nxtInfo[0]);
 				dataOut = new DataOutputStream (nxtComm.getOutputStream());
