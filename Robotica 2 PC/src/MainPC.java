@@ -1,5 +1,6 @@
-import robotica.Loop;
-import robotica.TestLoop;
+import robotica.NoAgent;
+import robotica.Simulation;
+import robotica.SimulationModel;
 
 public class MainPC
 {
@@ -9,8 +10,21 @@ public class MainPC
 	 */
 	public static void main(String[] args)
 	{
-		Loop loop = new TestLoop(1000);
-		loop.start();
+		SimulationModel model = new SimulationModel();
+		model.addAgent(new NoAgent().setLocalID(42));
+		model.addAgent(new NoAgent().setLocalID(27));
+		model.addAgent(new NoAgent().setLocalID(93));
+		
+		Simulation sim = new Simulation(model,100);
+		
+
+		sim.start();
+			
+		
+
+		
+		
+		
 	}
 
 }
