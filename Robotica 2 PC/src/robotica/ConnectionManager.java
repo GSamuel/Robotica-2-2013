@@ -43,7 +43,7 @@ public class ConnectionManager implements Runnable
 			{
 				usbComm.open(nxtInfo[i]);
 				dataOut = usbComm.getOutputStream();
-				dataIn = usbComm.getInputStream();
+				dataIn = usbComm.getInputStream(); 
 			}
 
 		} catch (NXTCommException e)
