@@ -35,7 +35,7 @@ public class ConnectionManager implements Runnable
 		try
 		{
 			usbComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
-			BTComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+			BTComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH); 
 			
 			nxtInfo = usbComm.search(null);
 			
