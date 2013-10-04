@@ -20,11 +20,12 @@ public class Simulation extends Loop
 	@Override
 	public void loop()
 	{
+		/*
 		for(Agent agent: model)
 		{
 			System.out.print(agent.getID()+" ");
 		}
-		System.out.println();
+		System.out.println();*/
 	}
 
 }
