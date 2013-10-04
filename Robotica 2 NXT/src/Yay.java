@@ -13,6 +13,8 @@ public class Yay
 		NXTRegulatedMotor mA = new NXTRegulatedMotor(MotorPort.A);
 		NXTRegulatedMotor mC = new NXTRegulatedMotor(MotorPort.C);
 		
+		
+		//TESTETSTETSETSET
 		mA.setSpeed(SPEED);
 		mA.forward();
 		mC.setSpeed(SPEED);
