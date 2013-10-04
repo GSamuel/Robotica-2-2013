@@ -9,6 +9,8 @@ public class MainPC
 	 */
 	public static void main(String[] args)
 	{
+		boolean bool;
+		
 		Loop loop = new TestLoop(1000);
 		loop.start();
 	}
