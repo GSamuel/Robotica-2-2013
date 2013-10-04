@@ -41,15 +41,9 @@ public class ConnectionManager implements Runnable
 			
 			for(int i = 0; i <nxtInfo.length; i++)
 			{
-				
-			}
-			
-			if (nxtInfo.length > 0)
-			{
-				usbComm.open(nxtInfo[0]);
-				dataOut = nxtComm.getOutputStream();
-				dataIn = nxtComm.getInputStream();
-				System.out.println("Connection Succesfull");
+				usbComm.open(nxtInfo[i]);
+				dataOut = usbComm.getOutputStream();
+				dataIn = usbComm.getInputStream(); 
 			}
 
 		} catch (NXTCommException e)
