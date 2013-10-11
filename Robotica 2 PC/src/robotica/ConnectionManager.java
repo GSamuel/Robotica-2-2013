@@ -11,18 +11,17 @@ import lejos.pc.comm.NXTInfo;
 public class ConnectionManager implements Runnable
 {
 	private NXTComm BTComm, usbComm;
+	private ConnectionModel model;
 
 	public ConnectionManager()
 	{
-
+		model = new ConnectionModel();
 	}
 
 	public void start()
 	{
 		new Thread(this).start();
-		;
 	}
-	
 
 	@Override
 	public void run()
@@ -34,36 +33,43 @@ public class ConnectionManager implements Runnable
 
 		try
 		{
-			usbComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 			BTComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-
-			nxtInfo = usbComm.search(null);
-
-			for (int i = 0; i < nxtInfo.length; i++)
-			{
-				usbComm.open(nxtInfo[i]);
-				dataOut = usbComm.getOutputStream();
-				dataIn = usbComm.getInputStream();
-			}
-			System.out.println(".");
-
-			nxtInfo = BTComm.search("brick");
-
-			for (int i = 0; i < nxtInfo.length; i++)
-			{
-				System.out.print(nxtInfo[i].name);
-				BTComm.open(nxtInfo[i]);
-
-				dataOut = BTComm.getOutputStream();
-				dataIn = BTComm.getInputStream();
-			}
-			System.out.println(".");
-
 		} catch (NXTCommException e)
 		{
-			e.printStackTrace();
+			System.out.println("Unable to use Bluetooth");
 		}
 
-	}
+		while (true)
+		{
 
+			try
+			{
+				nxtInfo = BTComm.search(null);
+			} catch (NXTCommException e)
+			{
+				System.out.println("Cant search for devices");
+				break;
+			}
+
+			for (int i = 0; i < nxtInfo.length; i++)
+			{
+				if (!model.contains(nxtInfo[i]))
+				{
+					try
+					{
+						BTComm.open(nxtInfo[i]);
+						dataOut = BTComm.getOutputStream();
+						dataIn = BTComm.getInputStream();
+						model.addConnection(new NXTConnection(nxtInfo[i],
+								dataOut, dataIn));
+
+						System.out.println("connected with: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
+					} catch (NXTCommException e)
+					{
+						System.out.println("cant establish a connection with decive: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
+					}
+				}
+			}
+		}
+	}
 }
