@@ -66,7 +66,7 @@ public class ConnectionManager implements Runnable
 						System.out.println("connected with: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
 					} catch (NXTCommException e)
 					{
-						System.out.println("cant establish a connection with decive: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
+						System.out.println("cant establish a connection with device: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
 					}
 				}
 			}

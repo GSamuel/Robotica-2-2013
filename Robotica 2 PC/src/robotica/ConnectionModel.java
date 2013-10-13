@@ -1,17 +1,17 @@
 package robotica;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Vector;
 
 import lejos.pc.comm.NXTInfo;
 
 public class ConnectionModel implements Iterable<NXTConnection>
 {
-	private ArrayList<NXTConnection> connections;
+	private Vector<NXTConnection> connections;
 
 	public ConnectionModel()
 	{
-		connections = new ArrayList<NXTConnection>();
+		connections = new Vector<NXTConnection>();
 	}
 	
 	public boolean contains(NXTInfo inf)
@@ -26,6 +26,7 @@ public class ConnectionModel implements Iterable<NXTConnection>
 	public void addConnection(NXTConnection con)
 	{
 		connections.add(con);
+		new Thread(con).start();
 	}
 
 	public void removeConnection(NXTConnection con)

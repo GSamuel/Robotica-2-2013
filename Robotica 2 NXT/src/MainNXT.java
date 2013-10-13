@@ -1,9 +1,10 @@
+import java.io.DataOutputStream;
+
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTConnection;
 import robotica.Loop;
 import robotica.TestLoop;
 
-/*
- * Main voor de NXT. Koppel eerst de NXT brick aan via USB en run als Lejos application. 
- */
 
 public class MainNXT {
 
@@ -15,7 +16,7 @@ public class MainNXT {
 
 		new StopProgram().start();
 		
-		Loop loop = new TestLoop(1000);
+		Loop loop = new NXTLoop(1000);
 		loop.start();
 
 		
