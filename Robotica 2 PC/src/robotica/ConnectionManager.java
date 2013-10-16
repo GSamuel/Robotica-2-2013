@@ -2,25 +2,38 @@ package robotica;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 
-public class ConnectionManager implements Runnable
+public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 {
-	private NXTComm BTComm, usbComm;
-	private ConnectionModel model;
+	public static ConnectionManager instance;
+	private NXTComm BTComm;
+	private ConnectionModel model = new ConnectionModel();
 
-	public ConnectionManager()
+	protected ConnectionManager()
 	{
-		model = new ConnectionModel();
+		// Exist only so you can't make an instance
+	}
+	
+	
+
+	public synchronized static ConnectionManager getInstance()
+	{
+		if (instance == null)
+			instance = new ConnectionManager();
+
+		return instance;
 	}
 
-	public void start()
+	public ConnectionManager start()
 	{
 		new Thread(this).start();
+		return this;
 	}
 
 	@Override
@@ -63,13 +76,27 @@ public class ConnectionManager implements Runnable
 						model.addConnection(new NXTConnection(nxtInfo[i],
 								dataOut, dataIn));
 
-						System.out.println("connected with: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
+						System.out.println("connected with: "
+								+ nxtInfo[i].deviceAddress + " name: "
+								+ nxtInfo[i].name);
 					} catch (NXTCommException e)
 					{
-						System.out.println("cant establish a connection with device: "+ nxtInfo[i].deviceAddress+" name: "+nxtInfo[i].name);
+						System.out
+								.println("cant establish a connection with device: "
+										+ nxtInfo[i].deviceAddress
+										+ " name: "
+										+ nxtInfo[i].name);
 					}
 				}
 			}
 		}
+	}
+
+
+
+	@Override
+	public Iterator<NXTConnection> iterator()
+	{
+		return model.iterator();
 	}
 }

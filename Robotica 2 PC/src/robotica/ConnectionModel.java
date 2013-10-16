@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import lejos.pc.comm.NXTInfo;
 
-public class ConnectionModel implements Iterable<NXTConnection>
+public class ConnectionModel implements Iterable<NXTConnection> 
 {
 	private Vector<NXTConnection> connections;
 
@@ -13,13 +13,18 @@ public class ConnectionModel implements Iterable<NXTConnection>
 	{
 		connections = new Vector<NXTConnection>();
 	}
-	
+
 	public boolean contains(NXTInfo inf)
 	{
-		for(NXTConnection con : connections)
-			if(con.getDeviceAdress() == inf.deviceAddress)
+		Iterator<NXTConnection> it = iterator();
+		while (it.hasNext())
+		{
+			NXTConnection con = it.next();
+			if (!con.isWorking())
+				it.remove();
+			else if (con.isEqual(inf))
 				return true;
-		
+		}
 		return false;
 	}
 
@@ -27,6 +32,16 @@ public class ConnectionModel implements Iterable<NXTConnection>
 	{
 		connections.add(con);
 		new Thread(con).start();
+	}
+
+	public NXTConnection get(int index)
+	{
+		return connections.get(index);
+	}
+
+	public int size()
+	{
+		return connections.size();
 	}
 
 	public void removeConnection(NXTConnection con)
@@ -37,6 +52,6 @@ public class ConnectionModel implements Iterable<NXTConnection>
 	@Override
 	public Iterator<NXTConnection> iterator()
 	{
-		return connections.iterator();
+		return connections.iterator();				
 	}
 }

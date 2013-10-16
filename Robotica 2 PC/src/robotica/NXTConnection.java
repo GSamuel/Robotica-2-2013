@@ -15,6 +15,7 @@ public class NXTConnection implements Runnable
 	private DataOutputStream dataOut;
 	private DataInputStream dataIn;
 	private Vector<Integer> receive;
+	private boolean working;
 
 	public NXTConnection(NXTInfo info, OutputStream out, InputStream in)
 	{
@@ -22,9 +23,15 @@ public class NXTConnection implements Runnable
 		nxtInfo = info;
 		dataOut = new DataOutputStream(out);
 		dataIn = new DataInputStream(in);
+		working = true;
+	}
+		
+	public boolean isEqual(NXTInfo inf)
+	{
+		return nxtInfo.deviceAddress.equals(inf.deviceAddress);
 	}
 
-	public void sendData(int i)
+	public boolean sendData(int i)
 	{
 		try
 		{
@@ -32,8 +39,10 @@ public class NXTConnection implements Runnable
 			dataOut.flush();
 		} catch (IOException e)
 		{
-			System.out.println("cant write int in output stream");
+			working = false;
+			System.out.println("cant write in output stream");
 		}
+		return working;
 	}
 
 	public int receiveData()
@@ -55,18 +64,24 @@ public class NXTConnection implements Runnable
 	{
 		return nxtInfo.deviceAddress;
 	}
+	
+	public boolean isWorking()
+	{
+		return working;
+	}
 
 	@Override
 	public void run()
 	{
-		while (true)
+		while (working)
 		{
 			try
 			{
 				receive.add(dataIn.readInt());
 			} catch (IOException e)
 			{
-				e.printStackTrace();
+				working = false;
+				System.out.println("cant read from input stream");
 			}
 		}
 	}
