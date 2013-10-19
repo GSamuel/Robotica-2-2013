@@ -26,10 +26,16 @@ public class Brick
 		if (!nxtCon.isWorking() && con.isWorking()
 				&& nxtCon.isEqual(con.getNXTInfo()))
 		{
-			this.nxtCon = nxtCon;
+			this.nxtCon = con;
 			return true;
 		}
 		return false;
+	}
+
+	public void update()
+	{
+		if(nxtCon.isWorking())
+		nxtCon.sendData(sim.getTotalTicks());
 	}
 
 }

@@ -40,7 +40,7 @@ public class NXTConnection implements Runnable
 		} catch (IOException e)
 		{
 			working = false;
-			System.out.println("cant write in output stream");
+			System.out.println("cant write to output: "+nxtInfo.name);
 		}
 		return working;
 	}
@@ -81,7 +81,7 @@ public class NXTConnection implements Runnable
 			} catch (IOException e)
 			{
 				working = false;
-				System.out.println("cant read from input stream");
+				System.out.println("cant read from input: " + nxtInfo.name);
 			}
 		}
 	}

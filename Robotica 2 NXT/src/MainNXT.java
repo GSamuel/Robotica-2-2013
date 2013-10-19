@@ -1,9 +1,4 @@
-import java.io.DataOutputStream;
-
-import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.comm.NXTConnection;
 import robotica.Loop;
-import robotica.TestLoop;
 
 
 public class MainNXT {

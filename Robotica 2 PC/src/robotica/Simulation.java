@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Simulation extends Loop
 {
-
 	private SimulationModel model;
 	private ConnectionManager conMan;
 	private ArrayList<Brick> bricks;
@@ -32,6 +31,7 @@ public class Simulation extends Loop
 	@Override
 	public void loop()
 	{
+		//check for new devices to add to the simulation or refreshes the connection of the devices already known that lost connection at some point
 		for (NXTConnection con : conMan)
 		{
 			boolean brickWithCon = false;
@@ -47,7 +47,10 @@ public class Simulation extends Loop
 				bricks.add(new Brick(con, this));
 		}
 		
-		System.out.println("amount of bricks: "+ bricks.size());
+		for(Brick brick : bricks)
+		{
+			brick.update();
+		}
 	}
 
 }

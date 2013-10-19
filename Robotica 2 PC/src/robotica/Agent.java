@@ -4,12 +4,18 @@ import java.util.ArrayList;
 
 public abstract class Agent
 {
-	private int localID;
+	private int id;
+	private State currentState;
 	private ArrayList<State> states;
 
 	public Agent()
 	{
 		states = new ArrayList<State>();
+	}
+	
+	public void setState(State state)
+	{
+		currentState = state;
 	}
 
 	public void addState(State state)
@@ -26,19 +32,19 @@ public abstract class Agent
 	{
 		for (State state : states)
 		{
-			if (name == state.getName())
+			if (name == state.name())
 				states.remove(state);
 		}
 	}
 
-	public Agent setLocalID(int id)
+	public Agent setID(int id)
 	{
-		localID = id;
+		this.id = id;
 		return this;
 	}
 
 	public int getID()
 	{
-		return localID;
+		return id;
 	}
 }

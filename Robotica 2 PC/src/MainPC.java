@@ -1,4 +1,3 @@
-import robotica.ConnectionManager;
 import robotica.Simulation;
 import robotica.SimulationModel;
 

@@ -35,6 +35,18 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 		new Thread(this).start();
 		return this;
 	}
+	
+	
+	private void newBTComm()
+	{
+		try
+		{
+			BTComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+		} catch (NXTCommException e)
+		{
+			System.out.println("Unable to make new comm port");
+		}
+	}
 
 	@Override
 	public void run()
@@ -44,14 +56,8 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 		OutputStream dataOut = null;
 		InputStream dataIn = null;
 
-		try
-		{
-			BTComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-		} catch (NXTCommException e)
-		{
-			System.out.println("Unable to use Bluetooth");
-		}
-
+		newBTComm();
+		
 		while (true)
 		{
 
@@ -66,7 +72,7 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 
 			for (int i = 0; i < nxtInfo.length; i++)
 			{
-				if (!model.contains(nxtInfo[i]))
+				if (!model.contains(nxtInfo[i]) && (nxtInfo[i].name.equalsIgnoreCase("GoodCook") || nxtInfo[i].name.equalsIgnoreCase("GoodWaiter") ||nxtInfo[i].name.equalsIgnoreCase("GoodCustomer")) )
 				{
 					try
 					{
@@ -79,6 +85,8 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 						System.out.println("connected with: "
 								+ nxtInfo[i].deviceAddress + " name: "
 								+ nxtInfo[i].name);
+
+						newBTComm();
 					} catch (NXTCommException e)
 					{
 						System.out
