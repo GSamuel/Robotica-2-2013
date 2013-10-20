@@ -31,7 +31,7 @@ public class ConnectionModel implements Iterable<NXTConnection>
 	public void addConnection(NXTConnection con)
 	{
 		connections.add(con);
-		new Thread(con).start();
+		con.start();
 	}
 
 	public NXTConnection get(int index)

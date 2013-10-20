@@ -35,7 +35,7 @@ public class Brick
 	public void update()
 	{
 		if(nxtCon.isWorking())
-		nxtCon.sendData(sim.getTotalTicks());
+		nxtCon.sendData(String.valueOf(sim.getTotalTicks()));
 	}
 
 }
