@@ -72,7 +72,7 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 
 			for (int i = 0; i < nxtInfo.length; i++)
 			{
-				if (!model.contains(nxtInfo[i]) && (nxtInfo[i].name.equalsIgnoreCase("GoodCook") || nxtInfo[i].name.equalsIgnoreCase("GoodWaiter") ||nxtInfo[i].name.equalsIgnoreCase("GoodCustomer")) )
+				if (!model.contains(nxtInfo[i]) && nxtInfo[i].name.contains("Good") )
 				{
 					try
 					{

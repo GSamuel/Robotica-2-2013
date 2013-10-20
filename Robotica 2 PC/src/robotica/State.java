@@ -3,20 +3,20 @@ package robotica;
 public abstract class State
 {
 	private final String name;
-	private final Agent target; // agent that has this state
+	private final int target; // agent that has this state
 	private boolean hasTarget;
 
 	public State(String name)
 	{
 		this.name = name;
-		this.target = null;
+		this.target = 0;
 		hasTarget = false;
 	}
 	
-	public State(String name, Agent agent)
+	public State(String name, int target)
 	{
 		this.name = name;
-		this.target = agent;
+		this.target = target;
 		hasTarget = true;
 	}
 	
@@ -25,7 +25,7 @@ public abstract class State
 		return hasTarget;
 	}
 	
-	public Agent target()
+	public int target()
 	{
 		return target;
 	}

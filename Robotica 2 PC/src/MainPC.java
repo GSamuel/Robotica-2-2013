@@ -9,7 +9,7 @@ public class MainPC
 	 */
 	public static void main(String[] args)
 	{
-		Simulation sim = new Simulation(new SimulationModel(), 1000);
+		Simulation sim = new Simulation(new SimulationModel(), 10);
 		sim.start();
 	}
 

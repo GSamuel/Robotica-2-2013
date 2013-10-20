@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
-public class BrickConnection implements Runnable
+import robotica.NxtPcConnection;
+
+public class BrickConnection implements Runnable, NxtPcConnection
 {
 	private DataOutputStream dataOut;
 	private DataInputStream dataIn;

@@ -53,4 +53,9 @@ public class Simulation extends Loop
 		}
 	}
 
+	public SimulationModel simulationModel()
+	{
+		return model;
+	}
+
 }

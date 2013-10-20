@@ -9,7 +9,7 @@ import java.util.Vector;
 
 import lejos.pc.comm.NXTInfo;
 
-public class NXTConnection implements Runnable
+public class NXTConnection implements Runnable, NxtPcConnection
 {
 	private NXTInfo nxtInfo;
 	private DataOutputStream dataOut;
