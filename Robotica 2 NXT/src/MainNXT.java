@@ -9,6 +9,7 @@ public class MainNXT {
 	 */
 	public static void main(String[] args) throws InterruptedException {
 
+		System.out.println("waiting connection");
 		new StopProgram().start();
 		
 		Loop loop = new NXTLoop(1000);
