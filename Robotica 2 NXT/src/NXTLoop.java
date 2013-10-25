@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.Vector;
 
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
@@ -10,30 +10,37 @@ import robotica.SimState;
 public class NXTLoop extends Loop
 {
 	private BrickConnection brickCon;
-	private ArrayList<Agent> agents;
+	private Vector<Agent> agents;
 
 	public NXTLoop(int tickTime)
 	{
 		super(tickTime);
 
-		agents = new ArrayList<Agent>();
-		agents.add(new SimAgent().setName("Cook").setState(new SimState("COOKING")));
-		agents.add(new SimAgent().setName("Customer").setState(new SimState("EATING")));
-		agents.add(new SimAgent().setName("Waiter").setState(new SimState("SLEEPING")));
+		agents = new Vector<Agent>();
 
+		System.out.println("waiting connection");
 		NXTConnection connection = Bluetooth.waitForConnection();
 		brickCon = new BrickConnection(connection.openDataOutputStream(),
 				connection.openDataInputStream());
 		brickCon.start();
-		
-		brickCon.sendData("NEW$");
-		brickCon.sendData("NEW$");
+	}
+	
+	public void addAgent(Agent agent)
+	{
+		agents.addElement(agent);
 		brickCon.sendData("NEW$");
 	}
 
 	@Override
 	public void loop()
 	{
+
+		for (int i = 0; i < agents.size(); i++)
+		{
+			agents.elementAt(i).update();
+		}
+		
+		//read from Bluetooth stream
 		while (!brickCon.isEmpty())
 		{
 			String s = brickCon.receiveData();
@@ -43,8 +50,9 @@ public class NXTLoop extends Loop
 			switch (first)
 			{
 			case "NEW":
-				for (Agent a : agents)
+				for (int i = 0; i < agents.size(); i++)
 				{
+					Agent a = agents.elementAt(i);
 					if (!a.hasID())
 					{
 						a.setID(Integer.parseInt(first(s)));
