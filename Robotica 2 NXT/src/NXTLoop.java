@@ -4,8 +4,6 @@ import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 import robotica.Agent;
 import robotica.Loop;
-import robotica.SimAgent;
-import robotica.SimState;
 
 public class NXTLoop extends Loop
 {
