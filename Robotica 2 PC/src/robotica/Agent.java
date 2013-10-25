@@ -10,9 +10,11 @@ public abstract class Agent
 	private State currentState;
 	private ArrayList<State> states;
 
-	public Agent()
+	public Agent(String name, State state)
 	{
 		states = new ArrayList<State>();
+		this.name = name;
+		currentState = state;
 	}
 	
 	public Agent setState(State state)
@@ -78,4 +80,6 @@ public abstract class Agent
 	{
 		return name;
 	}
+
+	public abstract void update();
 }
