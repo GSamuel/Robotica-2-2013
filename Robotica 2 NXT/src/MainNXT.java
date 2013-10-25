@@ -1,9 +1,5 @@
 import robotica.Loop;
-import robotica.TestLoop;
 
-/*
- * Main voor de NXT. Koppel eerst de NXT brick aan via USB en run als Lejos application. 
- */
 
 public class MainNXT {
 
@@ -13,9 +9,10 @@ public class MainNXT {
 	 */
 	public static void main(String[] args) throws InterruptedException {
 
+		System.out.println("waiting connection");
 		new StopProgram().start();
 		
-		Loop loop = new TestLoop(1000);
+		Loop loop = new NXTLoop(1000);
 		loop.start();
 
 		

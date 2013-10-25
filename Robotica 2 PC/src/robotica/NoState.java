@@ -3,7 +3,7 @@ package robotica;
 public class NoState extends State
 {
 
-	public NoState(Agent agent)
+	public NoState(int agent)
 	{
 		super("", agent);
 	}

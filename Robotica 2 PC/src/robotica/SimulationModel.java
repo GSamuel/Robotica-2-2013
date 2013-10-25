@@ -6,6 +6,7 @@ import java.util.Iterator;
 public class SimulationModel implements Iterable<Agent>
 {
 	private ArrayList<Agent> agents;
+	private int id = 0;
 
 	public SimulationModel()
 	{
@@ -14,6 +15,7 @@ public class SimulationModel implements Iterable<Agent>
 
 	public void addAgent(Agent agent)
 	{
+		agent.setID(id++);
 		agents.add(agent);
 	}
 
