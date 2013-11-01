@@ -3,6 +3,9 @@ package robotica;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import loop.Simulation;
+import connection.NXTConnection;
+
 public class Brick
 {
 	private NXTConnection nxtCon;

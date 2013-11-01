@@ -1,4 +1,8 @@
-public class MainWaiter
+package agent;
+import standard.ConnectionLoop;
+import standard.StopProgram;
+
+public class MainCustomer
 {
 	public static void main(String args[])
 	{
@@ -6,7 +10,7 @@ public class MainWaiter
 
 		ConnectionLoop loop = new ConnectionLoop(10);
 		
-		loop.addAgent(new Waiter());
+		loop.addAgent(new Customer());
 		loop.start();
 	}
 }

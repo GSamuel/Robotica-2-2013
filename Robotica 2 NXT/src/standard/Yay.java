@@ -1,3 +1,4 @@
+package standard;
 import lejos.nxt.Button;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTRegulatedMotor;

@@ -1,3 +1,4 @@
+package agent;
 import lejos.nxt.Motor;
 import robotica.Agent;
 import robotica.SimState;

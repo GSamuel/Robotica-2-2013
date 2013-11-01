@@ -1,4 +1,4 @@
-
+package connection;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,21 +7,28 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
-import robotica.NxtPcConnection;
+import lejos.pc.comm.NXTInfo;
 
-public class BrickConnection implements Runnable, NxtPcConnection
+public class NXTConnection implements Runnable, NxtPcConnection
 {
+	private NXTInfo nxtInfo;
 	private DataOutputStream dataOut;
 	private DataInputStream dataIn;
 	private Vector<String> receive;
 	private boolean working;
 
-	public BrickConnection(OutputStream out, InputStream in)
+	public NXTConnection(NXTInfo info, OutputStream out, InputStream in)
 	{
 		receive = new Vector<String>();
+		nxtInfo = info;
 		dataOut = new DataOutputStream(out);
 		dataIn = new DataInputStream(in);
 		working = true;
+	}
+		
+	public boolean isEqual(NXTInfo inf)
+	{
+		return nxtInfo.deviceAddress.equals(inf.deviceAddress);
 	}
 
 	public boolean sendData(String s)
@@ -33,26 +40,34 @@ public class BrickConnection implements Runnable, NxtPcConnection
 		} catch (IOException e)
 		{
 			working = false;
-			System.out.println("cant write to output");
+			System.out.println("cant write to output: "+nxtInfo.name);
 		}
 		return working;
-	}
-	
-	public void start()
-	{
-		new Thread(this).start();
 	}
 
 	public String receiveData()
 	{
-		String s = receive.elementAt(0);
-		receive.removeElementAt(0);
-		return s;
+		return receive.remove(0);
 	}
 
 	public boolean isEmpty()
 	{
 		return receive.isEmpty();
+	}
+
+	public NXTInfo getNXTInfo()
+	{
+		return nxtInfo;
+	}
+
+	public String getDeviceAdress()
+	{
+		return nxtInfo.deviceAddress;
+	}
+	
+	public void start()
+	{
+		new Thread(this).start();
 	}
 	
 	public boolean isWorking()
@@ -67,11 +82,11 @@ public class BrickConnection implements Runnable, NxtPcConnection
 		{
 			try
 			{
-				receive.addElement(dataIn.readUTF());
+				receive.add(dataIn.readUTF());
 			} catch (IOException e)
 			{
 				working = false;
-				System.out.println("cant read from input");
+				System.out.println("cant read from input: " + nxtInfo.name);
 			}
 		}
 	}

@@ -1,12 +1,13 @@
+package agent;
 import robotica.Agent;
 import robotica.SimState;
 
 
-public class Customer extends Agent
+public class Waiter extends Agent
 {
-	public Customer()
+	public Waiter()
 	{
-		super("Customer", new SimState("Eating"));
+		super("Waiter", new SimState("Sleeping"));
 	}
 
 	@Override

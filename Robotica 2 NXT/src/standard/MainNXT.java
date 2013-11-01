@@ -1,4 +1,5 @@
-import robotica.Loop;
+package standard;
+import loop.Loop;
 
 
 public class MainNXT {

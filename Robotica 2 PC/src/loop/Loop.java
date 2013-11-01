@@ -1,4 +1,4 @@
-package robotica;
+package loop;
 
 public abstract class Loop implements Runnable
 {

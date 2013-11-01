@@ -1,3 +1,7 @@
+package agent;
+import standard.ConnectionLoop;
+import standard.StopProgram;
+
 public class MainCook
 {
 	public static void main(String args[])

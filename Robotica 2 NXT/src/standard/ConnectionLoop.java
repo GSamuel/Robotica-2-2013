@@ -1,9 +1,10 @@
+package standard;
 import java.util.Vector;
 
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
+import loop.Loop;
 import robotica.Agent;
-import robotica.Loop;
 
 public class ConnectionLoop extends Loop
 {

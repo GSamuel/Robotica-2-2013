@@ -1,7 +1,8 @@
+package standard;
 import java.util.Vector;
 
+import loop.Loop;
 import robotica.Agent;
-import robotica.Loop;
 
 public class UpdateLoop extends Loop
 {
