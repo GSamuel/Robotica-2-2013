@@ -1,4 +1,4 @@
-package robotica;
+package connection;
 
 import java.io.InputStream;
 import java.io.OutputStream;

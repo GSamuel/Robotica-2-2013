@@ -1,6 +1,11 @@
-package robotica;
+package loop;
 
 import java.util.ArrayList;
+
+import robotica.Brick;
+import robotica.SimulationModel;
+import connection.ConnectionManager;
+import connection.NXTConnection;
 
 public class Simulation extends Loop
 {

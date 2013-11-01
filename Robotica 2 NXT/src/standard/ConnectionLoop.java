@@ -1,26 +1,35 @@
+package standard;
 import java.util.Vector;
 
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
+import loop.Loop;
 import robotica.Agent;
-import robotica.Loop;
 
-public class NXTLoop extends Loop
+public class ConnectionLoop extends Loop
 {
 	private BrickConnection brickCon;
 	private Vector<Agent> agents;
+	private boolean connected = false;
 
-	public NXTLoop(int tickTime)
+	public ConnectionLoop(int tickTime)
 	{
 		super(tickTime);
 
 		agents = new Vector<Agent>();
-
+		new UpdateLoop(tickTime, agents).start();	
+	}
+	
+	public void connect()
+	{	
+		
 		System.out.println("waiting connection");
 		NXTConnection connection = Bluetooth.waitForConnection();
 		brickCon = new BrickConnection(connection.openDataOutputStream(),
 				connection.openDataInputStream());
 		brickCon.start();
+		
+		connected = true;
 	}
 	
 	public void addAgent(Agent agent)
@@ -31,15 +40,9 @@ public class NXTLoop extends Loop
 
 	@Override
 	public void loop()
-	{
-
-		for (int i = 0; i < agents.size(); i++)
-		{
-			agents.elementAt(i).update();
-		}
-		
+	{	
 		//read from Bluetooth stream
-		while (!brickCon.isEmpty())
+		while (connected && !brickCon.isEmpty())
 		{
 			String s = brickCon.receiveData();
 			String first = first(s);

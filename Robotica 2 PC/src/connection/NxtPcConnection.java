@@ -1,4 +1,4 @@
-package robotica;
+package connection;
 
 public interface NxtPcConnection
 {

@@ -1,4 +1,5 @@
-import robotica.Loop;
+package standard;
+import loop.Loop;
 
 
 public class MainNXT {
@@ -12,7 +13,7 @@ public class MainNXT {
 		System.out.println("waiting connection");
 		new StopProgram().start();
 		
-		Loop loop = new NXTLoop(1000);
+		Loop loop = new ConnectionLoop(1000);
 		loop.start();
 
 		
