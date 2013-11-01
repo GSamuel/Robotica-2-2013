@@ -4,7 +4,7 @@ public class MainWaiter
 	{
 		new StopProgram().start();
 
-		NXTLoop loop = new NXTLoop(10);
+		ConnectionLoop loop = new ConnectionLoop(10);
 		
 		loop.addAgent(new Waiter());
 		loop.start();

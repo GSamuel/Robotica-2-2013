@@ -4,9 +4,11 @@ public class MainCook
 	{
 		new StopProgram().start();
 
-		NXTLoop loop = new NXTLoop(10);
-		
+		ConnectionLoop loop = new ConnectionLoop(10);
 		loop.addAgent(new Cook());
+		
+		loop.connect();
+		
 		loop.start();
 	}
 }
