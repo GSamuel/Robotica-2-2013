@@ -1,6 +1,6 @@
 package agent;
-import standard.ConnectionLoop;
 import standard.StopProgram;
+import connection.ConnectionManager;
 
 public class MainCook
 {
@@ -8,11 +8,15 @@ public class MainCook
 	{
 		new StopProgram().start();
 
+		ConnectionManager.getInstance().start();
+		
+		/*
 		ConnectionLoop loop = new ConnectionLoop(10);
 		loop.addAgent(new Cook());
 		
 		loop.connect();
-		
 		loop.start();
+		*/
+		
 	}
 }
