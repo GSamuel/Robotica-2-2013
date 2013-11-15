@@ -6,9 +6,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Vector;
 
-import robotica.AgentObserver;
+import connection.ConnectionObserver;
 import connection.NxtPcConnection;
 
 public class BrickConnection implements Runnable, NxtPcConnection
@@ -22,6 +23,7 @@ public class BrickConnection implements Runnable, NxtPcConnection
 
 	public BrickConnection(OutputStream out, InputStream in)
 	{
+		observers = new ArrayList<ConnectionObserver>();
 		receive = new Vector<String>();
 		dataOut = new DataOutputStream(out);
 		dataIn = new DataInputStream(in);
@@ -65,12 +67,12 @@ public class BrickConnection implements Runnable, NxtPcConnection
 		return working;
 	}
 	
-	public void registerObserver(AgentObserver o)
+	public void registerObserver(ConnectionObserver o)
 	{
 		observers.add(o);
 	}
 	
-	public void removeObserver(AgentObserver o)
+	public void removeObserver(ConnectionObserver o)
 	{
 		int i = observers.indexOf(o);
 		if(i>=0)
@@ -82,8 +84,8 @@ public class BrickConnection implements Runnable, NxtPcConnection
 		if(changed)
 		for(int i = 0; i < observers.size(); i++)
 		{
-			AgentObserver o = observers.get(i);
-			o.update(this);
+			ConnectionObserver o = observers.get(i);
+			o.update();
 			changed = false;
 		}
 	}
@@ -107,6 +109,8 @@ public class BrickConnection implements Runnable, NxtPcConnection
 			try
 			{
 				receive.addElement(dataIn.readUTF());
+				setChanged();
+				notifyObservers();
 			} catch (IOException e)
 			{
 				working = false;
