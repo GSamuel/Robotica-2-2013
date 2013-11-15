@@ -9,12 +9,48 @@ public abstract class Agent
 	private boolean hasID = false, hasName = false;
 	private State currentState;
 	private ArrayList<State> states;
+	private ArrayList<AgentObserver> observers;
+	private boolean changed = false;
 
 	public Agent(String name, State state)
 	{
 		states = new ArrayList<State>();
 		this.name = name;
 		currentState = state;
+		setChanged();
+	}
+	
+	public void registerObserver(AgentObserver o)
+	{
+		observers.add(o);
+	}
+	
+	public void removeObserver(AgentObserver o)
+	{
+		int i = observers.indexOf(o);
+		if(i>=0)
+			observers.remove(i);
+	}
+	
+	public void notifyObservers()
+	{
+		if(changed)
+		for(int i = 0; i < observers.size(); i++)
+		{
+			AgentObserver o = observers.get(i);
+			o.update(this);
+			changed = false;
+		}
+	}
+	
+	public void setChanged()
+	{
+		changed = true;
+	}
+	
+	public boolean hasChanged()
+	{
+		return changed;
 	}
 	
 	public Agent setState(State state)

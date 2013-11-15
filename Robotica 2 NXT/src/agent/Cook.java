@@ -1,5 +1,4 @@
 package agent;
-import lejos.nxt.Motor;
 import robotica.Agent;
 import robotica.SimState;
 
@@ -16,9 +15,12 @@ public class Cook extends Agent
 	@Override
 	public void update()
 	{
+		System.out.println(System.currentTimeMillis());
+		/*
 		if(init)
 		{
 			Motor.C.rotateTo(90);
 		}
+		*/
 	}
 }

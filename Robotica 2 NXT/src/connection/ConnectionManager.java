@@ -27,6 +27,18 @@ public class ConnectionManager implements Runnable
 		new Thread(this).start();
 		return this;
 	}
+	
+	public BrickConnection getBrickConnection()
+	{
+		return brickCon;
+	}
+	
+	public boolean isConnected()
+	{
+		if(brickCon == null)
+			return false;
+		return brickCon.isWorking();
+	}
 
 	
 	@Override
@@ -37,7 +49,5 @@ public class ConnectionManager implements Runnable
 		brickCon = new BrickConnection(connection.openDataOutputStream(),
 				connection.openDataInputStream());
 		brickCon.start();
-
-		brickCon.sendData("NEW$");
 	}
 }
