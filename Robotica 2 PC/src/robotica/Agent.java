@@ -46,6 +46,7 @@ public abstract class Agent
 	public void setChanged()
 	{
 		changed = true;
+		notifyObservers();
 	}
 	
 	public boolean hasChanged()

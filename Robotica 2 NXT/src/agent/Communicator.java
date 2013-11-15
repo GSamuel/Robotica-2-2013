@@ -8,13 +8,11 @@ import robotica.AgentObserver;
 public class Communicator implements AgentObserver
 {
 	private AgentCollection col;
-	private boolean upToDate;
 	private LinkedList<String> messages;
 	
 	public Communicator(AgentCollection col)
 	{
 		this.col = col;
-		upToDate = false;
 		messages = new LinkedList<String>();
 	}
 	
