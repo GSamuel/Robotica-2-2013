@@ -19,7 +19,6 @@ public class UpdateLoop extends Loop
 	{
 		for(int i = 0; i < agents.size(); i++)
 			agents.elementAt(i).update();
-
 	}
 
 }

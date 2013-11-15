@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import robotica.AgentObserver;
 import connection.NxtPcConnection;
 
 public class BrickConnection implements Runnable, NxtPcConnection
@@ -16,6 +17,8 @@ public class BrickConnection implements Runnable, NxtPcConnection
 	private DataInputStream dataIn;
 	private Vector<String> receive;
 	private boolean working;
+	private boolean changed;
+	private ArrayList<ConnectionObserver> observers;
 
 	public BrickConnection(OutputStream out, InputStream in)
 	{
@@ -23,6 +26,7 @@ public class BrickConnection implements Runnable, NxtPcConnection
 		dataOut = new DataOutputStream(out);
 		dataIn = new DataInputStream(in);
 		working = true;
+		changed = false;
 	}
 
 	public boolean sendData(String s)
@@ -59,6 +63,40 @@ public class BrickConnection implements Runnable, NxtPcConnection
 	public boolean isWorking()
 	{
 		return working;
+	}
+	
+	public void registerObserver(AgentObserver o)
+	{
+		observers.add(o);
+	}
+	
+	public void removeObserver(AgentObserver o)
+	{
+		int i = observers.indexOf(o);
+		if(i>=0)
+			observers.remove(i);
+	}
+	
+	public void notifyObservers()
+	{
+		if(changed)
+		for(int i = 0; i < observers.size(); i++)
+		{
+			AgentObserver o = observers.get(i);
+			o.update(this);
+			changed = false;
+		}
+	}
+	
+	public void setChanged()
+	{
+		changed = true;
+		notifyObservers();
+	}
+	
+	public boolean hasChanged()
+	{
+		return changed;
 	}
 
 	@Override

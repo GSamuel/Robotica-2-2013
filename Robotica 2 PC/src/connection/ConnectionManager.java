@@ -11,7 +11,7 @@ import lejos.pc.comm.NXTInfo;
 
 public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 {
-	public static ConnectionManager instance;
+	private static ConnectionManager instance;
 	private NXTComm BTComm;
 	private ConnectionModel model = new ConnectionModel();
 
@@ -63,7 +63,7 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 
 			try
 			{
-				nxtInfo = BTComm.search(null);
+				nxtInfo = BTComm.search("GoodCustomer");
 			} catch (NXTCommException e)
 			{
 				System.out.println("Cant search for devices");
