@@ -9,17 +9,32 @@ public class MainCook
 	{
 		new StopProgram().start();
 
-		ConnectionManager.getInstance().start();
+		ConnectionManager conMan = ConnectionManager.getInstance();
+		conMan.start();
 		
 		AgentCollection col = new AgentCollection();
 		Communicator com = new Communicator(col);
 	
+		
 		Cook cook = new Cook ();
 		com.observe(cook);
 		col.addAgent(cook);
-		
+
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();
+		
+		while(!conMan.isConnected())
+			try
+			{
+				Thread.sleep(10);
+			} catch (InterruptedException e)
+			{
+				System.out.println("fu gaat mis hiero");
+			}
+		
+		System.out.println("yay connected");
+
+		conMan.getBrickConnection().registerObserver(com);
 		
 		/*
 		ConnectionLoop loop = new ConnectionLoop(10);

@@ -15,6 +15,7 @@ public abstract class Agent
 	public Agent(String name, State state)
 	{
 		states = new ArrayList<State>();
+		observers = new ArrayList<AgentObserver>();
 		this.name = name;
 		currentState = state;
 		setChanged();

@@ -1,28 +1,41 @@
 package agent;
+
+import lejos.nxt.Motor;
 import robotica.Agent;
 import robotica.SimState;
-
-
-
 
 public class Cook extends Agent
 {
 	private boolean init;
+
 	public Cook()
 	{
-		super("Cook", new SimState("Cooking"));
+		super("Cook", new SimState("TEST"));
 		init = true;
+
+		Motor.A.resetTachoCount();
 	}
 
 	@Override
 	public void update()
 	{
-		System.out.println(System.currentTimeMillis());
-		/*
-		if(init)
+
+		if (this.currentState().name().equals("TEST"))
 		{
-			Motor.C.rotateTo(90);
+			Motor.A.setSpeed(720);
+			Motor.A.rotateTo(90);
+			if(Motor.A.getTachoCount() >=85 && Motor.A.getTachoCount() <= 95)
+			{
+				this.setState(new SimState("BLUB"));
+				setChanged();
+			}
 		}
-		*/
+		if (this.currentState().name().equals("BLUB"))
+		{
+			Motor.A.setSpeed(720);
+			Motor.A.rotateTo(360);
+		}
+
+		notifyObservers();
 	}
 }

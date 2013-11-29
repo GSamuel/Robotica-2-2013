@@ -1,54 +1,51 @@
 package agent;
 
-import java.util.LinkedList;
+import java.util.Vector;
 
-import connection.ConnectionManager;
-import connection.ConnectionObserver;
 import robotica.Agent;
 import robotica.AgentObserver;
 import standard.BrickConnection;
+import connection.ConnectionManager;
+import connection.ConnectionObserver;
 
 public class Communicator implements AgentObserver, ConnectionObserver
 {
 	private AgentCollection col;
-	private LinkedList<String> messages;
-	
+	private Vector<String> messages;
+
 	public Communicator(AgentCollection col)
 	{
 		this.col = col;
-		messages = new LinkedList<String>();
+		messages = new Vector<String>();
 	}
-	
+
 	public void observe(Agent a)
 	{
 		a.registerObserver(this);
-		messages.add("$NEW");
+		messages.addElement("$NEW");
 	}
-	
-	//Agent state changed
+
+	// Agent state changed
 	@Override
 	public void update(Agent a)
 	{
-		
+		a.currentState();
+		messages.addElement("SETSTATE$F$"+a.getID()+"$"+a.currentState().name()+"$");
 	}
 
-	
-	//New Input
+	// New Input
 	@Override
 	public void update()
 	{
-		BrickConnection bc = ConnectionManager.getInstance().getBrickConnection();
-		while(!bc.isEmpty())
+		BrickConnection bc = ConnectionManager.getInstance()
+				.getBrickConnection();
+		while (!bc.isEmpty())
 		{
 			String s = bc.receiveData();
-			
-			
-			
-			
-			
+			System.out.println(s);
 		}
 	}
-	
+
 	private String first(String s)
 	{
 		return s.substring(0, s.indexOf('$'));
