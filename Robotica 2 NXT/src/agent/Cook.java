@@ -35,6 +35,7 @@ public class Cook extends Agent
 			Motor.A.setSpeed(720);
 			Motor.A.rotateTo(360);
 		}
+		
 
 		notifyObservers();
 	}

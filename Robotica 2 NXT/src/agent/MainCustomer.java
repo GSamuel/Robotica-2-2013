@@ -1,4 +1,6 @@
 package agent;
+import connection.ConnectionManager;
+import standard.AgentLoop;
 import standard.ConnectionLoop;
 import standard.StopProgram;
 
@@ -8,9 +10,32 @@ public class MainCustomer
 	{
 		new StopProgram().start();
 
-		ConnectionLoop loop = new ConnectionLoop(10);
+		ConnectionManager conMan = ConnectionManager.getInstance();
+		conMan.start();
 		
-		loop.addAgent(new Customer());
+		AgentCollection col = new AgentCollection();
+		Communicator com = new Communicator(col);
+	
+		
+		Customer cus= new Customer ();
+		com.observe(cus);
+		col.addAgent(cus);
+
+		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();
+		
+		while(!conMan.isConnected())
+			try
+			{
+				Thread.sleep(10);
+			} catch (InterruptedException e)
+			{
+				System.out.println("fu gaat mis hiero");
+			}
+		
+		System.out.println("yay connected");
+
+		conMan.getBrickConnection().registerObserver(com);
+		
 	}
 }
