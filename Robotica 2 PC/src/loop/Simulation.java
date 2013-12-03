@@ -52,10 +52,12 @@ public class Simulation extends Loop
 				bricks.add(new Brick(con, this));
 		}
 		
+		//make sure all bricks int the simulation are up to date.
 		for(Brick brick : bricks)
 		{
 			brick.update();
 		}
+		
 	}
 
 	public SimulationModel simulationModel()

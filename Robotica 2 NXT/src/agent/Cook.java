@@ -7,6 +7,7 @@ import robotica.SimState;
 public class Cook extends Agent
 {
 	private boolean init;
+	private long start = System.currentTimeMillis();
 
 	public Cook()
 	{
@@ -18,11 +19,12 @@ public class Cook extends Agent
 	@Override
 	public void update()
 	{
+		long timePassed = System.currentTimeMillis() - start;
 		if (this.currentState().name().equals("TEST"))
 		{
 			Motor.A.setSpeed(720);
 			Motor.A.rotateTo(90);
-			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95)
+			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95 && timePassed >= 20000)
 			{
 				this.setState(new SimState("BLUB"));
 				setChanged();

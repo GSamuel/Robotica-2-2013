@@ -19,14 +19,14 @@ public class MainCook
 		Cook cook = new Cook ();
 		com.observe(cook);
 		col.addAgent(cook);
-		
+		/*
 		cook = new Cook ();
 		com.observe(cook);
 		col.addAgent(cook);
 		
 		cook = new Cook ();
 		com.observe(cook);
-		col.addAgent(cook);
+		col.addAgent(cook);*/
 
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();
