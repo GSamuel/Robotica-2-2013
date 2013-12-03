@@ -12,19 +12,17 @@ public class Cook extends Agent
 	{
 		super("Cook", new SimState("TEST"));
 		init = true;
-
 		Motor.A.resetTachoCount();
 	}
 
 	@Override
 	public void update()
 	{
-
 		if (this.currentState().name().equals("TEST"))
 		{
 			Motor.A.setSpeed(720);
 			Motor.A.rotateTo(90);
-			if(Motor.A.getTachoCount() >=85 && Motor.A.getTachoCount() <= 95)
+			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95)
 			{
 				this.setState(new SimState("BLUB"));
 				setChanged();
@@ -35,7 +33,6 @@ public class Cook extends Agent
 			Motor.A.setSpeed(720);
 			Motor.A.rotateTo(360);
 		}
-		
 
 		notifyObservers();
 	}

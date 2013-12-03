@@ -2,13 +2,16 @@ package agent;
 
 import java.util.Vector;
 
+import loop.Loop;
 import robotica.Agent;
 import robotica.AgentObserver;
+import robotica.SimAgent;
 import standard.BrickConnection;
 import connection.ConnectionManager;
 import connection.ConnectionObserver;
 
-public class Communicator implements AgentObserver, ConnectionObserver
+public class Communicator extends Loop implements AgentObserver,
+		ConnectionObserver
 {
 	private AgentCollection col;
 	private Vector<String> messages;
@@ -16,6 +19,7 @@ public class Communicator implements AgentObserver, ConnectionObserver
 
 	public Communicator(AgentCollection col)
 	{
+		super(10);
 		this.col = col;
 		messages = new Vector<String>();
 	}
@@ -23,7 +27,13 @@ public class Communicator implements AgentObserver, ConnectionObserver
 	public void observe(Agent a)
 	{
 		a.registerObserver(this);
-		messages.addElement("$NEW");
+		messages.addElement("NEW$");
+	}
+
+	public void start()
+	{
+		new Thread(this).start();
+		;
 	}
 
 	// Agent state changed
@@ -31,8 +41,15 @@ public class Communicator implements AgentObserver, ConnectionObserver
 	public void update(Agent a)
 	{
 		a.currentState();
-		messages.addElement("SETSTATE$F$" + a.getID() + "$"
-				+ a.currentState().name() + "$");
+		if (a.hasToSendAll() && a.hasID())
+		{
+			messages.addElement("SETNAME$" + a.getID() + "$" + a.name() + "$");
+			messages.addElement("SETSTATE$F$" + a.getID() + "$"
+					+ a.currentState().name() + "$");
+			a.allSended();
+		} else if (a.hasID())
+			messages.addElement("SETSTATE$F$" + a.getID() + "$"
+					+ a.currentState().name() + "$");
 	}
 
 	// New Input
@@ -43,7 +60,7 @@ public class Communicator implements AgentObserver, ConnectionObserver
 		while (!bc.isEmpty())
 		{
 			String s = bc.receiveData();
-			System.out.println(s);
+			col.processData(s);
 		}
 	}
 
@@ -52,20 +69,20 @@ public class Communicator implements AgentObserver, ConnectionObserver
 		if (conMan.isConnected())
 		{
 			BrickConnection bc = conMan.getBrickConnection();
-			while( messages.size() > 0)
+			while (messages.size() > 0)
+			{
 				bc.sendData(messages.elementAt(0));
+				messages.removeElementAt(0);
+			}
 		}
 
 	}
 
-	private String first(String s)
+	@Override
+	public void loop()
 	{
-		return s.substring(0, s.indexOf('$'));
-	}
+		sendMessagesToServer();
 
-	private String left(String s)
-	{
-		return s.substring(s.indexOf('$') + 1);
 	}
 
 }

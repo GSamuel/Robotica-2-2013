@@ -56,6 +56,7 @@ public class Brick
 				sim.simulationModel().addAgent(a);
 				nxtCon.sendData("NEW$".concat(String.valueOf(a.getID()))
 						.concat("$"));
+				System.out.println("New Agent Found");
 				break;
 			case "SETSTATE":
 
@@ -74,7 +75,7 @@ public class Brick
 											.parseInt(first(s))));
 				else
 					getAgentWithId(agentID).setState(new SimState(stateName));
-				System.out.println(getAgentWithId(agentID).currentState().name());
+				System.out.println("State changed of "+getAgentWithId(agentID).name()+" into "+ getAgentWithId(agentID).currentState().name());
 				break;
 			case "SETNAME":
 				
@@ -83,7 +84,7 @@ public class Brick
 				s = left(s);
 				ag.setName(first(s));
 				
-				System.out.println(getAgentWithId(Aid).name());
+				System.out.println("agent with id "+ Aid+" name changed into "+getAgentWithId(Aid).name());
 
 				break;
 			default :
@@ -118,8 +119,10 @@ public class Brick
 	private Agent getAgentWithId(int id)
 	{
 		for (Agent a : agents)
+		{
 			if (a.hasID() && a.getID() == id)
 				return a;
+		}
 
 		return null;
 	}

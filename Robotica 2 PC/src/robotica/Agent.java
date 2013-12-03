@@ -11,13 +11,15 @@ public abstract class Agent
 	private ArrayList<State> states;
 	private ArrayList<AgentObserver> observers;
 	private boolean changed = false;
+	private boolean sendAll = false;
 
 	public Agent(String name, State state)
 	{
 		states = new ArrayList<State>();
 		observers = new ArrayList<AgentObserver>();
-		this.name = name;
+		setName(name);
 		currentState = state;
+		sendAll = true;
 		setChanged();
 	}
 	
@@ -47,12 +49,27 @@ public abstract class Agent
 	public void setChanged()
 	{
 		changed = true;
-		notifyObservers();
 	}
 	
 	public boolean hasChanged()
 	{
 		return changed;
+	}
+	
+	public void setSendAll()
+	{
+		sendAll = true;
+		setChanged();
+	}
+	
+	public void allSended()
+	{
+		sendAll = false;
+	}
+	
+	public boolean hasToSendAll()
+	{
+		return sendAll;
 	}
 	
 	public Agent setState(State state)
@@ -111,6 +128,7 @@ public abstract class Agent
 	{
 		this.name = name;
 		hasName = true;
+		setSendAll();
 		return this;
 	}
 
