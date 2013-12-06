@@ -4,9 +4,6 @@ import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.pathfinding.*;
 
-//Behavior Programming jonguh
-
-
 public class Pathfinder {
 
 int ColorAreaGuest1;
