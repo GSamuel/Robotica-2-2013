@@ -18,8 +18,8 @@ public class MainCustomer
 	
 		
 		Customer cus= new Customer ();
-		com.observe(cus);
 		col.addAgent(cus);
+		com.observe(cus);
 
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();
