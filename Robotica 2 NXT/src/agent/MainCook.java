@@ -14,8 +14,7 @@ public class MainCook
 		
 		AgentCollection col = new AgentCollection();
 		Communicator com = new Communicator(col);
-	
-		
+				
 		Cook cook = new Cook ();
 		com.observe(cook);
 		col.addAgent(cook);
