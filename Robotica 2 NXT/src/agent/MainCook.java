@@ -16,8 +16,8 @@ public class MainCook
 		Communicator com = new Communicator(col);
 				
 		Cook cook = new Cook ();
-		com.observe(cook);
 		col.addAgent(cook);
+		com.observe(cook);
 
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();

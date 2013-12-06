@@ -30,4 +30,17 @@ public class SimulationModel implements Iterable<Agent>
 		return agents.iterator();
 	}
 
+	public int amountAgents()
+	{
+		return agents.size();
+	}
+	
+	public Agent getAgentAt(int index)
+	{
+		if(index < agents.size())
+			return agents.get(index);
+		else
+			return null;
+	}
+
 }
