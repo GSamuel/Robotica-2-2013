@@ -38,5 +38,7 @@ public class MainCustomer
 
 		conMan.getBrickConnection().registerObserver(com);
 		
+		com.start();
+		
 	}
 }

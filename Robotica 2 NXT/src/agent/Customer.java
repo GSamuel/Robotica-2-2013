@@ -21,6 +21,7 @@ public class Customer extends Agent {
 		currenttime = System.currentTimeMillis();
 		stopwatch = 0;
 		this.setState(new SimState("NEUTRAAL"));
+		setChanged();
 		
 		this.motor = motor;
 		motor.resetTachoCount();
