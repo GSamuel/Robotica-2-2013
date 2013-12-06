@@ -82,7 +82,5 @@ public class Communicator extends Loop implements AgentObserver,
 	public void loop()
 	{
 		sendMessagesToServer();
-
 	}
-
 }
