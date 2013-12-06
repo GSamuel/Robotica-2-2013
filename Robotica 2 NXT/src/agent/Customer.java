@@ -1,6 +1,7 @@
 package agent;
 
 import lejos.nxt.Motor;
+import lejos.nxt.NXTRegulatedMotor;
 import robotica.Agent;
 import robotica.SimState;
 
@@ -9,15 +10,20 @@ public class Customer extends Agent {
 	private long starttime;
 	private long currenttime;
 	private long stopwatch;
+	
+	//Motor.A vervangen door motor, zodat een customer aan een specifieke motor gekoppeld kan worden.   Yay dynamischheid
+	private NXTRegulatedMotor motor;
 
-	public Customer() {
+	public Customer(NXTRegulatedMotor motor) {
 		super("Customer", new SimState("WBESTELLEN"));
 		init = true;
 		starttime = System.currentTimeMillis();
 		currenttime = System.currentTimeMillis();
 		stopwatch = 0;
 		this.setState(new SimState("NEUTRAAL"));
-		Motor.A.resetTachoCount();
+		
+		this.motor = motor;
+		motor.resetTachoCount();
 	}
 
 	@Override
@@ -49,9 +55,9 @@ public class Customer extends Agent {
 
 	private void neutraal() {
 		if (this.currentState().name().equals("WBESTELLEN")) {
-			Motor.A.setSpeed(720);
-			Motor.A.rotateTo(0);
-			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95) {
+			motor.setSpeed(720);
+			motor.rotateTo(0);
+			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
 			}
 		}
 
@@ -59,8 +65,8 @@ public class Customer extends Agent {
 
 	private void wBestellen() {
 		if (this.currentState().name().equals("WBESTELLEN")) {
-			Motor.A.setSpeed(720);
-			Motor.A.rotateTo(90);
+			motor.setSpeed(720);
+			motor.rotateTo(90);
 			this.setState(new SimState("WETEN"));
 			setChanged();
 		}
@@ -68,9 +74,9 @@ public class Customer extends Agent {
 
 	private void wEten() {
 		if (this.currentState().name().equals("WBESTELLEN")) {
-			Motor.A.setSpeed(720);
-			Motor.A.rotateTo(90);
-			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95) {
+			motor.setSpeed(720);
+			motor.rotateTo(90);
+			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
 				this.setState(new SimState("BLUB"));
 				setChanged();
 			}
@@ -80,9 +86,9 @@ public class Customer extends Agent {
 
 	private void eten() {
 		if (this.currentState().name().equals("WBESTELLEN")) {
-			Motor.A.setSpeed(720);
-			Motor.A.rotateTo(90);
-			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95) {
+			motor.setSpeed(720);
+			motor.rotateTo(90);
+			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
 				this.setState(new SimState("BLUB"));
 				setChanged();
 			}
@@ -92,9 +98,9 @@ public class Customer extends Agent {
 
 	private void wBetalen() {
 		if (this.currentState().name().equals("WBESTELLEN")) {
-			Motor.A.setSpeed(720);
-			Motor.A.rotateTo(90);
-			if (Motor.A.getTachoCount() >= 85 && Motor.A.getTachoCount() <= 95) {
+			motor.setSpeed(720);
+			motor.rotateTo(90);
+			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
 				this.setState(new SimState("BLUB"));
 				setChanged();
 			}

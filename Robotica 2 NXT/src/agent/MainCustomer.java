@@ -1,4 +1,5 @@
 package agent;
+import lejos.nxt.Motor;
 import connection.ConnectionManager;
 import standard.AgentLoop;
 import standard.ConnectionLoop;
@@ -17,7 +18,7 @@ public class MainCustomer
 		Communicator com = new Communicator(col);
 	
 		
-		Customer cus= new Customer ();
+		Customer cus= new Customer (Motor.A);
 		col.addAgent(cus);
 		com.observe(cus);
 
