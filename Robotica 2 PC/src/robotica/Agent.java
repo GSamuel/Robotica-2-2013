@@ -24,66 +24,66 @@ public abstract class Agent
 		sendAll = true;
 		setChanged();
 	}
-	
+
 	public int coupledStateSize()
 	{
 		return cStates.size();
 	}
-	
+
 	public CoupledState getCoupledState(int index)
 	{
 		return cStates.get(index);
 	}
-	
+
 	public void registerObserver(AgentObserver o)
 	{
 		observers.add(o);
 	}
-	
+
 	public void removeObserver(AgentObserver o)
 	{
 		int i = observers.indexOf(o);
-		if(i>=0)
+		if (i >= 0)
 			observers.remove(i);
 	}
-	
+
 	public void notifyObservers()
 	{
-		if(changed)
-		for(int i = 0; i < observers.size(); i++)
-		{
-			AgentObserver o = observers.get(i);
-			o.update(this);
-			changed = false;
-		}
+		if (changed)
+			for (int i = 0; i < observers.size(); i++)
+			{
+				AgentObserver o = observers.get(i);
+				o.update(this);
+				changed = false;
+			}
 	}
-	
+
 	public void setChanged()
 	{
 		changed = true;
 	}
-	
+
 	public boolean hasChanged()
 	{
 		return changed;
 	}
-	
+
 	public void setSendAll()
 	{
 		sendAll = true;
 		setChanged();
 	}
-	
+
 	public void allSended()
 	{
 		sendAll = false;
 	}
-	
+
 	public boolean hasToSendAll()
 	{
 		return sendAll;
 	}
-	
+
 	public Agent setState(State state)
 	{
 		currentState = state;
@@ -108,10 +108,20 @@ public abstract class Agent
 				states.remove(state);
 		}
 	}
-	
+
 	public void addCoupledState(CoupledState cstate)
 	{
-		cStates.add(cstate);
+		boolean same = false;
+		for (int i = 0; i < cStates.size(); i++)
+		{
+			if (cStates.get(i).isSame(cstate))
+			{
+				same = true;
+				break;
+			}
+		}
+		if (!same)
+			cStates.add(cstate);
 	}
 
 	public void removeCoupledState(CoupledState cstate)
@@ -123,7 +133,8 @@ public abstract class Agent
 	{
 		for (CoupledState cstate : cStates)
 		{
-			if (own == cstate.getOwnState().name() && target == cstate.getTargetState().name())
+			if (own == cstate.getOwnState().name()
+					&& target == cstate.getTargetState().name())
 				cStates.remove(cstate);
 		}
 	}
@@ -139,17 +150,17 @@ public abstract class Agent
 	{
 		return id;
 	}
-	
+
 	public boolean hasID()
 	{
 		return hasID;
 	}
-	
+
 	public State currentState()
 	{
 		return currentState;
 	}
-	
+
 	public boolean hasName()
 	{
 		return hasName;

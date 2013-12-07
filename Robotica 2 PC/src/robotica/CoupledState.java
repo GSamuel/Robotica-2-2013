@@ -24,4 +24,9 @@ public class CoupledState
 	{
 		return target;
 	}
+	
+	public boolean isSame(CoupledState cstate)
+	{
+		return cstate.getOwnState().name().equals(own.name()) && cstate.getTargetState().name().equals(target.name());
+	}
 }

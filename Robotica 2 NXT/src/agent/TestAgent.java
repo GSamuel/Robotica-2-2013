@@ -16,7 +16,6 @@ public class TestAgent extends Agent
 	@Override
 	public void update()
 	{
-		
 		notifyObservers();
 	}
 
