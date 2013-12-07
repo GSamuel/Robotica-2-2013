@@ -21,6 +21,15 @@ public class MainCustomer
 		Customer cus= new Customer (Motor.A);
 		col.addAgent(cus);
 		com.observe(cus);
+		
+		/*
+		cus= new Customer (Motor.B);
+		col.addAgent(cus);
+		com.observe(cus);
+		
+		cus= new Customer (Motor.C);
+		col.addAgent(cus);
+		com.observe(cus);*/
 
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();

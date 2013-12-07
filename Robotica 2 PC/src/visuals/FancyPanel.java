@@ -54,9 +54,9 @@ public class FancyPanel extends JPanel implements Observer, KeyListener,
 				g.fillRect(i*300, 0, 290, 650);
 				g.setColor(Color.BLACK);
 				g2d.setFont(bigFont);
-				g2d.drawString("Agent: "+ag.name(), 20, 50);
+				g2d.drawString("Agent: "+ag.name(), 20 + i*300, 50);
 				g2d.setFont(smallFont);
-				g2d.drawString("Current state: "+ag.currentState().name(), 20, 150);
+				g2d.drawString("Current state: "+ag.currentState().name(), 20 + i*300, 150);
 			}
 		}
 	}
