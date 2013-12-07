@@ -6,10 +6,4 @@ public class SimState extends State
 	{
 		super(name);
 	}
-	
-	public SimState(String name, int agent)
-	{
-		super(name, agent);
-	}
-
 }

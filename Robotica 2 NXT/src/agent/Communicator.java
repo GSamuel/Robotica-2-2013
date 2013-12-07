@@ -5,7 +5,7 @@ import java.util.Vector;
 import loop.Loop;
 import robotica.Agent;
 import robotica.AgentObserver;
-import robotica.SimAgent;
+import robotica.CoupledState;
 import standard.BrickConnection;
 import connection.ConnectionManager;
 import connection.ConnectionObserver;
@@ -44,12 +44,25 @@ public class Communicator extends Loop implements AgentObserver,
 		if (a.hasToSendAll() && a.hasID())
 		{
 			messages.addElement("SETNAME$" + a.getID() + "$" + a.name() + "$");
-			messages.addElement("SETSTATE$F$" + a.getID() + "$"
-					+ a.currentState().name() + "$");
+			createMessages(a);
 			a.allSended();
 		} else if (a.hasID())
-			messages.addElement("SETSTATE$F$" + a.getID() + "$"
-					+ a.currentState().name() + "$");
+			createMessages(a);
+	}
+	
+	private void createMessages(Agent a)
+	{
+		messages.addElement("SETSTATE$" + a.getID() + "$"
+				+ a.currentState().name() + "$");
+		
+		for(int i = 0; i < a.coupledStateSize(); i++)
+		{
+			CoupledState cs = a.getCoupledState(i);
+			if(cs.getOwnState().name().equals(a.currentState().name()))
+			{
+				messages.addElement("ADDCSTATE$" + a.getID()+"$"+ cs.getOwnState().name()+"$"+cs.getTargetState().name() + "$");
+			}
+		}
 	}
 
 	// New Input

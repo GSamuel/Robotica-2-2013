@@ -56,7 +56,14 @@ public class FancyPanel extends JPanel implements Observer, KeyListener,
 				g2d.setFont(bigFont);
 				g2d.drawString("Agent: "+ag.name(), 20 + i*300, 50);
 				g2d.setFont(smallFont);
-				g2d.drawString("Current state: "+ag.currentState().name(), 20 + i*300, 150);
+				g2d.drawString("Current state: "+ag.currentState().name(), 20 + i*300, 100);
+				
+				if(ag.coupledStateSize() > 0)
+					g2d.drawString("Coupled states", 80 + i*300, 145);
+				
+				for(int j = 0; j < ag.coupledStateSize(); j++)
+					g2d.drawString(ag.getCoupledState(j).getOwnState().name()+" --- "+ag.getCoupledState(i).getTargetState().name(), 20 + i*300, 180 + j*50);
+					
 			}
 		}
 	}

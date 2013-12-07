@@ -59,22 +59,13 @@ public class Brick
 				System.out.println("New Agent Found");
 				break;
 			case "SETSTATE":
-
-				boolean target = first(s) == "T";
-				s = left(s);
 				int agentID = Integer.parseInt(first(s));
 				s = left(s);
 				String stateName = first(s);
 				s = left(s);
-
-				if (target)
-
-					getAgentWithId(agentID)
-							.setState(
-									new SimState(stateName, Integer
-											.parseInt(first(s))));
-				else
-					getAgentWithId(agentID).setState(new SimState(stateName));
+				
+				getAgentWithId(agentID).setState(new SimState(stateName));
+				
 				System.out.println("State changed of "+getAgentWithId(agentID).name()+" into "+ getAgentWithId(agentID).currentState().name());
 				break;
 			case "SETNAME":
@@ -86,6 +77,19 @@ public class Brick
 				
 				System.out.println("agent with id "+ Aid+" name changed into "+getAgentWithId(Aid).name());
 
+				break;
+			case "ADDCSTATE":
+				int agID = Integer.parseInt(first(s));
+				s = left(s);
+				String ownState = first(s);
+				s = left(s);
+				String targetState = first(s);
+				s = left(s);
+				
+				getAgentWithId(agID).addCoupledState(new CoupledState(ownState, targetState));
+				
+				System.out.println("Coupled State added to "+getAgentWithId(agID).name()+": "+ownState+" --- "+targetState);
+				
 				break;
 			default :
 				System.out.println("can't process stream data: "+ first+ "$" + s);

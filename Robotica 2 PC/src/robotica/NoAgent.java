@@ -4,13 +4,12 @@ public class NoAgent extends Agent
 {
 	public NoAgent()
 	{
-		super("NoName", new NoState(0));
+		super("NoName", new NoState());
 	}
 
 	@Override
 	public void update()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 }

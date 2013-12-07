@@ -9,6 +9,7 @@ public abstract class Agent
 	private boolean hasID = false, hasName = false;
 	private State currentState;
 	private ArrayList<State> states;
+	private ArrayList<CoupledState> cStates;
 	private ArrayList<AgentObserver> observers;
 	private boolean changed = false;
 	private boolean sendAll = false;
@@ -17,10 +18,21 @@ public abstract class Agent
 	{
 		states = new ArrayList<State>();
 		observers = new ArrayList<AgentObserver>();
+		cStates = new ArrayList<CoupledState>();
 		setName(name);
 		currentState = state;
 		sendAll = true;
 		setChanged();
+	}
+	
+	public int coupledStateSize()
+	{
+		return cStates.size();
+	}
+	
+	public CoupledState getCoupledState(int index)
+	{
+		return cStates.get(index);
 	}
 	
 	public void registerObserver(AgentObserver o)
@@ -94,6 +106,25 @@ public abstract class Agent
 		{
 			if (name == state.name())
 				states.remove(state);
+		}
+	}
+	
+	public void addCoupledState(CoupledState cstate)
+	{
+		cStates.add(cstate);
+	}
+
+	public void removeCoupledState(CoupledState cstate)
+	{
+		cStates.remove(cstate);
+	}
+
+	public void removeCoupledState(String own, String target)
+	{
+		for (CoupledState cstate : cStates)
+		{
+			if (own == cstate.getOwnState().name() && target == cstate.getTargetState().name())
+				cStates.remove(cstate);
 		}
 	}
 
