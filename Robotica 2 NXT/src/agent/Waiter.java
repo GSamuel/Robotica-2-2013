@@ -12,14 +12,16 @@ import robotica.State;
 
 public class Waiter extends Agent
 {
-	int CounterLeft = 0;
-	int CounterRight = 0;
-	int RightMotor = 720;
-	int LeftMotor = 720;
-	int TurningSpeed = 360;
-	int Draaicirkel = 2;
-	boolean TurnLeft;
-	boolean TurnRight;
+	int counterLeft = 0;
+	int counterRight = 0;
+	int rightMotor = 300;
+	int leftMotor = 300;
+	int turningSpeed = 400;
+	int n = 10;
+	int draaicirkel = 5;
+	int wait = 0;
+	int motorStop = 15;
+	boolean turnDirection = true; // left if true, right if false
 	private TouchSensor touch;
 	private UltrasonicSensor sonar;
 	
@@ -37,13 +39,15 @@ public class Waiter extends Agent
 		{
 		case "START":
 			Button.waitForAnyPress();
-			this.setState(new SimState("STATE_YAY"));
+			this.setState(new SimState("FIND_PATH"));
 			setChanged();
 			break;
-		case "STATE_YAY":
+		case "FOLLOW_PATH":
 			follow_path();
 			break;
-		
+		case "FIND_PATH":
+			find_path();
+			break;
 		}
 		
 		notifyObservers();
@@ -51,9 +55,51 @@ public class Waiter extends Agent
 	
 	private void follow_path()
 	{
-		Motor.A.setSpeed(LeftMotor); //linkermotor
-		Motor.B.setSpeed(RightMotor); //rechtermotor
+		Motor.A.setSpeed(leftMotor); //linkermotor
+		Motor.B.setSpeed(rightMotor); //rechtermotor
 		Motor.A.forward();
 		Motor.B.forward();
+	}
+	
+	private void find_path()
+	{
+		if (motorStop < 300)
+		{
+			Motor.A.setSpeed(0);
+			Motor.B.setSpeed(0);
+			motorStop++;
+		}
+			
+		else if (counterLeft == draaicirkel || counterRight == draaicirkel)
+		{
+				if (counterLeft == draaicirkel)
+				{
+					counterRight = 0;
+					turnDirection = false;
+				}
+				else if (counterRight == draaicirkel)
+				{
+					counterLeft = 0;
+					turnDirection = true;
+				}
+			n += 10;
+			draaicirkel = n;
+		}
+		else if (counterLeft < draaicirkel && turnDirection)
+		{
+			Motor.A.setSpeed(turningSpeed); 
+			Motor.B.setSpeed(turningSpeed);
+			Motor.A.forward();
+			Motor.B.backward();
+			counterLeft++;
+		}
+		else if (counterRight < draaicirkel && !turnDirection )
+		{
+			Motor.A.setSpeed(turningSpeed); 
+			Motor.B.setSpeed(turningSpeed);
+			Motor.A.backward();
+			Motor.B.forward();
+			counterRight++;
+		}
 	}
 }

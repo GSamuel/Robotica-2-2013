@@ -17,8 +17,8 @@ public class MainWaiter
 		Communicator com = new Communicator(col);
 	
 		Waiter waiter = new Waiter();
-		com.observe(waiter);
 		col.addAgent(waiter);
+		com.observe(waiter);
 
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();
