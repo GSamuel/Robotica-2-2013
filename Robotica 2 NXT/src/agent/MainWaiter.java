@@ -1,8 +1,7 @@
 package agent;
-import connection.ConnectionManager;
 import standard.AgentLoop;
-import standard.ConnectionLoop;
 import standard.StopProgram;
+import connection.ConnectionManager;
 
 public class MainWaiter
 {

@@ -1,9 +1,8 @@
 package agent;
 import lejos.nxt.Motor;
-import connection.ConnectionManager;
 import standard.AgentLoop;
-import standard.ConnectionLoop;
 import standard.StopProgram;
+import connection.ConnectionManager;
 
 public class MainCustomer
 {

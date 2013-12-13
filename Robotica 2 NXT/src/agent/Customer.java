@@ -2,7 +2,6 @@ package agent;
 
 import java.util.Random;
 
-import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import robotica.Agent;
 import robotica.SimState;
