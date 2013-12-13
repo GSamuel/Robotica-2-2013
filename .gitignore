@@ -1,5 +1,6 @@
 *.nxj
 *.nxd
+*.gitignore
 
 *.class
 *.metadata
