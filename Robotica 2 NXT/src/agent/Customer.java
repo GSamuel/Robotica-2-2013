@@ -1,5 +1,7 @@
 package agent;
 
+import java.util.Random;
+
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import robotica.Agent;
@@ -15,13 +17,13 @@ public class Customer extends Agent {
 	private NXTRegulatedMotor motor;
 
 	public Customer(NXTRegulatedMotor motor) {
-		super("Customer", new SimState("WBESTELLEN"));
+		super("Customer", new SimState("NEUTRAAL"));
 		init = true;
 		starttime = System.currentTimeMillis();
 		currenttime = System.currentTimeMillis();
 		stopwatch = 0;
-		this.setState(new SimState("NEUTRAAL"));
-		setChanged();
+		//this.setState(new SimState("NEUTRAAL"));
+		//setChanged();
 		
 		this.motor = motor;
 		motor.resetTachoCount();
@@ -31,82 +33,104 @@ public class Customer extends Agent {
 	public void update() {
 		currenttime = System.currentTimeMillis();
 		stopwatch = currenttime - starttime;
-		System.out.println(stopwatch);
+		//System.out.println(stopwatch);
 		switch (currentState().name()) {
 		case "NEUTRAAL":
 			neutraal();
-			// this.setState(new SimState("BLUB"));
-			// setChanged();
+			 this.setState(new SimState("WBESTELLEN"));
+			 setChanged();
 			break;
 		case "WBESTELLEN":
-			wBestellen();
+			wBestellen();			
+			this.setState(new SimState("WETEN"));
+			setChanged();
 			break;
 		case "WETEN":
-			wBestellen();
+			wEten();
+			this.setState(new SimState("ETEN"));
+			setChanged();
 			break;
 		case "ETEN":
-			wBetalen();
+			eten();
+			this.setState(new SimState("WBETALEN"));
+			setChanged();
 			break;
 		case "WBETALEN":
-			wBestellen();
+			wBetalen();
+			this.setState(new SimState("NEUTRAAL"));
+			setChanged();
 			break;
 		}
 		notifyObservers();
 	}
 
 	private void neutraal() {
-		if (this.currentState().name().equals("WBESTELLEN")) {
 			motor.setSpeed(720);
 			motor.rotateTo(0);
-			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
+			System.out.println("NEUTRAAL");
+			Random rand= new Random();
+			try {
+				Thread.sleep(rand.nextInt(2000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-
 	}
 
 	private void wBestellen() {
-		if (this.currentState().name().equals("WBESTELLEN")) {
 			motor.setSpeed(720);
 			motor.rotateTo(90);
-			this.setState(new SimState("WETEN"));
-			setChanged();
-		}
+			System.out.println("wBestellen");
+			Random rand= new Random();
+			try {
+				Thread.sleep(rand.nextInt(2000)+1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 	private void wEten() {
-		if (this.currentState().name().equals("WBESTELLEN")) {
 			motor.setSpeed(720);
-			motor.rotateTo(90);
-			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
-				this.setState(new SimState("BLUB"));
-				setChanged();
+			motor.rotateTo(180);
+			System.out.println("wEten");
+			Random rand= new Random();
+			try {
+				Thread.sleep(rand.nextInt(2000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-
 	}
 
 	private void eten() {
-		if (this.currentState().name().equals("WBESTELLEN")) {
-			motor.setSpeed(720);
-			motor.rotateTo(90);
-			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
-				this.setState(new SimState("BLUB"));
-				setChanged();
+			motor.setSpeed(300);
+			motor.forward();
+			System.out.println("ETEN");
+			Random rand= new Random();
+			try {
+				Thread.sleep(rand.nextInt(5000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-
 	}
 
 	private void wBetalen() {
-		if (this.currentState().name().equals("WBESTELLEN")) {
 			motor.setSpeed(720);
-			motor.rotateTo(90);
-			if (motor.getTachoCount() >= 85 && motor.getTachoCount() <= 95) {
-				this.setState(new SimState("BLUB"));
-				setChanged();
+			int lol= motor.getTachoCount()/360;
+			motor.rotateTo(lol*360);
+			motor.resetTachoCount();
+			motor.setSpeed(720);
+			motor.rotateTo(270);
+			System.out.println("wBetalen");
+			Random rand= new Random();
+			try {
+				Thread.sleep(rand.nextInt(2000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-
 	}
 
 }
