@@ -12,11 +12,6 @@ import robotica.State;
 
 public class Waiter extends Agent
 {
-
-	private int customers[] = { 2, 0, 7 }; // blauw, rood, donkerblauw
-	private int customerColor = 2;
-	private int cookColor = 0;
-
 	int counterLeft = 0;
 	int counterRight = 0;
 	int rightMotor = 300;
@@ -33,8 +28,7 @@ public class Waiter extends Agent
 
 	public Waiter()
 	{
-		super("Waiter", new SimState("NEEM_BESTELLING_OP"));
-		Button.waitForAnyPress();
+		super("Waiter", new SimState("START"));
 	}
 
 	@Override
@@ -43,47 +37,20 @@ public class Waiter extends Agent
 		State state = this.currentState();
 		switch (state.name())
 		{
-		case "IDLE":
-			// do nothing
-			break;
 		case "START":
+			Button.waitForAnyPress();
 			this.setState(new SimState("FOLLOW_PATH"));
 			setChanged();
 			break;
-		case "NEEM_BESTELLING_OP":
-			neemBestellingOp();
+		case "FOLLOW_PATH":
+			follow_path();
 			break;
-		case "AFREKENEN":
-			// follow_path();
+		case "FIND_PATH":
+			find_path();
 			break;
-		case "BRENG_VOEDSEL":
-			// follow_path();
-			break;
-
 		}
 
 		notifyObservers();
-	}
-
-	private void neemBestellingOp()
-	{
-		if (color.getColorID() == customerColor)
-		{
-
-			Motor.A.suspendRegulation();
-			Motor.B.suspendRegulation();
-			
-			try
-			{
-				Thread.sleep(2000);
-			} catch (InterruptedException e)
-			{
-			}
-			
-		} else
-		{
-			follow_path();
-		}
 	}
 
 	private boolean onPath()
@@ -105,30 +72,19 @@ public class Waiter extends Agent
 			Motor.B.setSpeed(300);
 			Motor.A.forward();
 			Motor.B.forward();
-
 			/*
-			 * Motor.A.setSpeed(leftMotor); // linkermotor
-			 * Motor.B.setSpeed(rightMotor); // rechtermotor Motor.A.forward();
-			 * Motor.B.forward();
-			 */
-
+			Motor.A.setSpeed(leftMotor); // linkermotor
+			Motor.B.setSpeed(rightMotor); // rechtermotor
+			Motor.A.forward();
+			Motor.B.forward();*/
 		} else
 		{
-			/*
-			 * for (int i = 0; i < 3; i++) { if (color.getColorID() ==
-			 * customers[i]) { Motor.A.setSpeed(0); Motor.B.setSpeed(0);
-			 * Motor.A.forward(); Motor.B.forward();
-			 * 
-			 * this.setState(new SimState("STOP")); setChanged(); }
-			 * 
-			 * }
-			 */
 
 			Motor.A.setSpeed(300);
 			Motor.B.setSpeed(150);
 			Motor.A.forward();
 			Motor.B.forward();
-			// this.setState(new SimState("FIND_PATH"));
+			//this.setState(new SimState("FIND_PATH"));
 		}
 
 	}
@@ -181,9 +137,3 @@ public class Waiter extends Agent
 	}
 
 }
-
-// Breng Voedsel naar klant X.
-// Bestelling opnemen.
-// Afrekenen.
-// Idle
-
