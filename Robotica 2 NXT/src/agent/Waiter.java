@@ -1,4 +1,5 @@
 package agent;
+
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
@@ -8,9 +9,6 @@ import lejos.nxt.addon.ColorHTSensor;
 import robotica.Agent;
 import robotica.SimState;
 import robotica.State;
-
-
-
 
 public class Waiter extends Agent
 {
@@ -27,7 +25,7 @@ public class Waiter extends Agent
 	private TouchSensor touch;
 	private UltrasonicSensor sonar;
 	ColorHTSensor color = new ColorHTSensor(SensorPort.S1);
-	
+
 	public Waiter()
 	{
 		super("Waiter", new SimState("START"));
@@ -37,98 +35,105 @@ public class Waiter extends Agent
 	public void update()
 	{
 		State state = this.currentState();
-		switch(state.name())
+		switch (state.name())
 		{
 		case "START":
 			Button.waitForAnyPress();
 			this.setState(new SimState("FOLLOW_PATH"));
 			setChanged();
 			break;
-		case "FOLLOW_PATH":	
+		case "FOLLOW_PATH":
 			follow_path();
 			break;
 		case "FIND_PATH":
 			find_path();
 			break;
 		}
-		
+
 		notifyObservers();
 	}
-	
+
 	private boolean onPath()
 	{
-		if(color.getColorID() == 3)
+		if (color.getColorID() == 3)
 			return true;
 		else
 		{
 			return false;
 		}
 	}
-	
+
 	private void follow_path()
 	{
-		
-	if(onPath()){
-		Motor.A.setSpeed(leftMotor); //linkermotor
-		Motor.B.setSpeed(rightMotor); //rechtermotor
-		Motor.A.forward();
-		Motor.B.forward();
-		}
-	else
+
+		if (onPath())
 		{
-			this.setState(new SimState("FIND_PATH"));
-		}	
-			
+			Motor.A.setSpeed(150);
+			Motor.B.setSpeed(300);
+			Motor.A.forward();
+			Motor.B.forward();
+			/*
+			Motor.A.setSpeed(leftMotor); // linkermotor
+			Motor.B.setSpeed(rightMotor); // rechtermotor
+			Motor.A.forward();
+			Motor.B.forward();*/
+		} else
+		{
+
+			Motor.A.setSpeed(300);
+			Motor.B.setSpeed(150);
+			Motor.A.forward();
+			Motor.B.forward();
+			//this.setState(new SimState("FIND_PATH"));
+		}
+
 	}
-	
+
 	private void find_path()
 	{
 
-	if(onPath()){
-		counterLeft = 0;
-		counterRight = 0;
-		draaicirkel = 5;
-		this.setState(new SimState("FOLLOW_PATH"));
-	}
-	else
-	{
-		if (counterLeft > draaicirkel || counterRight > draaicirkel)
+		if (onPath())
 		{
 			counterLeft = 0;
 			counterRight = 0;
-		}
-		else if (counterLeft == draaicirkel || counterRight == draaicirkel)
+			draaicirkel = 5;
+			this.setState(new SimState("FOLLOW_PATH"));
+		} else
 		{
+			if (counterLeft > draaicirkel || counterRight > draaicirkel)
+			{
+				counterLeft = 0;
+				counterRight = 0;
+			} else if (counterLeft == draaicirkel
+					|| counterRight == draaicirkel)
+			{
 				if (counterLeft == draaicirkel)
 				{
 					counterRight = 0;
 					turnDirection = false;
-				}
-				else if (counterRight == draaicirkel)
+				} else if (counterRight == draaicirkel)
 				{
 					counterLeft = 0;
 					turnDirection = true;
 				}
-			n += 10;
-			draaicirkel = n;
+				n += 10;
+				draaicirkel = n;
+			} else if (counterLeft < draaicirkel && turnDirection)
+			{
+				Motor.A.setSpeed(turningSpeed);
+				Motor.B.setSpeed(turningSpeed);
+				Motor.A.forward();
+				Motor.B.backward();
+				counterLeft++;
+			} else if (counterRight < draaicirkel && !turnDirection)
+			{
+				Motor.A.setSpeed(turningSpeed);
+				Motor.B.setSpeed(turningSpeed);
+				Motor.A.backward();
+				Motor.B.forward();
+				counterRight++;
+			}
 		}
-		else if (counterLeft < draaicirkel && turnDirection)
-		{
-			Motor.A.setSpeed(turningSpeed); 
-			Motor.B.setSpeed(turningSpeed);
-			Motor.A.forward();
-			Motor.B.backward();
-			counterLeft++;
-		}
-		else if (counterRight < draaicirkel && !turnDirection )
-		{
-			Motor.A.setSpeed(turningSpeed); 
-			Motor.B.setSpeed(turningSpeed);
-			Motor.A.backward();
-			Motor.B.forward();
-			counterRight++;
-		}
-	}
 	}
 
 }

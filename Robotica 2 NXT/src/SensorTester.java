@@ -17,7 +17,7 @@ public class SensorTester
 	{
 		new StopProgram().start();
 
-		ColorHTSensor color = new ColorHTSensor(SensorPort.S4);
+		ColorHTSensor color = new ColorHTSensor(SensorPort.S1);
 		String colore = "color";
 		String r = "r";
 		String b = "b";
