@@ -2,7 +2,6 @@
 import lejos.nxt.Motor;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
-import lejos.robotics.pathfinding.*;
 
 public class Pathfinder {
 

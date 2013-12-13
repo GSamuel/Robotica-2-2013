@@ -1,8 +1,10 @@
 package agent;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
+import lejos.nxt.addon.ColorHTSensor;
 import robotica.Agent;
 import robotica.SimState;
 import robotica.State;
@@ -24,6 +26,7 @@ public class Waiter extends Agent
 	boolean turnDirection = true; // left if true, right if false
 	private TouchSensor touch;
 	private UltrasonicSensor sonar;
+	ColorHTSensor color = new ColorHTSensor(SensorPort.S1);
 	
 	public Waiter()
 	{
@@ -34,15 +37,14 @@ public class Waiter extends Agent
 	public void update()
 	{
 		State state = this.currentState();
-
 		switch(state.name())
 		{
 		case "START":
 			Button.waitForAnyPress();
-			this.setState(new SimState("FIND_PATH"));
+			this.setState(new SimState("FOLLOW_PATH"));
 			setChanged();
 			break;
-		case "FOLLOW_PATH":
+		case "FOLLOW_PATH":	
 			follow_path();
 			break;
 		case "FIND_PATH":
@@ -53,23 +55,48 @@ public class Waiter extends Agent
 		notifyObservers();
 	}
 	
+	private boolean onPath()
+	{
+		if(color.getColorID() == 3)
+			return true;
+		else
+		{
+			return false;
+		}
+	}
+	
 	private void follow_path()
 	{
+		
+	if(onPath()){
 		Motor.A.setSpeed(leftMotor); //linkermotor
 		Motor.B.setSpeed(rightMotor); //rechtermotor
 		Motor.A.forward();
 		Motor.B.forward();
+		}
+	else
+		{
+			this.setState(new SimState("FIND_PATH"));
+		}	
+			
 	}
 	
 	private void find_path()
 	{
-		if (motorStop < 300)
+
+	if(onPath()){
+		counterLeft = 0;
+		counterRight = 0;
+		draaicirkel = 5;
+		this.setState(new SimState("FOLLOW_PATH"));
+	}
+	else
+	{
+		if (counterLeft > draaicirkel || counterRight > draaicirkel)
 		{
-			Motor.A.setSpeed(0);
-			Motor.B.setSpeed(0);
-			motorStop++;
+			counterLeft = 0;
+			counterRight = 0;
 		}
-			
 		else if (counterLeft == draaicirkel || counterRight == draaicirkel)
 		{
 				if (counterLeft == draaicirkel)
@@ -102,4 +129,6 @@ public class Waiter extends Agent
 			counterRight++;
 		}
 	}
+	}
+
 }
