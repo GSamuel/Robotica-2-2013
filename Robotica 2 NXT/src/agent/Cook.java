@@ -9,10 +9,12 @@ public class Cook extends Agent
 	private boolean init = false;
 	private int count;
 	private long start = System.currentTimeMillis();
+	private boolean ligtBal[] = {true, true, true, false};
+	private final int position[] = {10000, 6000,-10000,0};
 
 	public Cook()
 	{
-		super("Cook", new SimState("GRAB"));
+		super("Cook", new SimState("IDLE"));
 		init();
 		count = 0;
 		Motor.A.resetTachoCount();
@@ -40,7 +42,7 @@ public class Cook extends Agent
 			Motor.A.rotateTo(0);
 			Motor.B.rotateTo(0);
 			Motor.C.rotateTo(0);
-			this.setState(new SimState("STOP"));
+			this.setState(new SimState("GRAB"));
 			setChanged();
 			break;
 		case "GRAB":
@@ -48,8 +50,9 @@ public class Cook extends Agent
 			Motor.B.setSpeed(720);
 			Motor.C.setSpeed(720);
 			
+			Motor.C.rotateTo(position[1]);
 			
-			
+			/*
 			Motor.A.rotateTo(-6700);
 			Motor.B.rotateTo(100);
 			Motor.A.rotateTo(0);
@@ -57,8 +60,8 @@ public class Cook extends Agent
 			Motor.A.rotateTo(-6700);
 			Motor.B.rotateTo(0);
 			Motor.A.rotateTo(0);
-			Motor.C.rotateTo(0);
-			this.setState(new SimState("STOP"));
+			Motor.C.rotateTo(0);*/
+			//this.setState(new SimState("STOP"));
 			setChanged();
 			break;
 		case "STOP":
@@ -90,5 +93,12 @@ public class Cook extends Agent
 		 */
 
 		notifyObservers();
+	}
+	
+	private void grab()
+	{
+		Motor.A.rotateTo(-6700);
+		Motor.B.rotateTo(100);
+		Motor.A.rotateTo(0);
 	}
 }
