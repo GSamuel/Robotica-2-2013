@@ -56,9 +56,7 @@ public class AgentCollection
 				Agent a = agents.elementAt(i);
 				if(a.getID() == id)
 				{
-					first(data);
-					//String name = first(data);
-					/*
+					String name = first(data);
 					data = left(data);
 					
 					String target = first(data);
@@ -67,15 +65,18 @@ public class AgentCollection
 					for(int j = 0; j < a.coupledStateSize(); j++)
 					{
 						CoupledState sta = a.getCoupledState(j);
-						if(sta.getTargetState().equals(name))
+						System.out.println(name+" "+ sta.getTargetState().name());
+						if(sta.getTargetState().name().equals(name))
 						{
 							a.setState(new SimState(sta.getNewState().name(), target));
 							a.setChanged();
+							System.out.println(a.currentState().name());
 						}
-					}*/
+					}
 				}
 
 			}
+			break;
 		}
 	}
 
