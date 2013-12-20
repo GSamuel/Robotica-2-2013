@@ -42,6 +42,8 @@ public class AgentCollection
 					break;
 				}
 			}
+		case "CSTATE":
+			data = left(data);
 		}
 	}
 

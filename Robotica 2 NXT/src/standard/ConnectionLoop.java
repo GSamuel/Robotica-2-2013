@@ -1,4 +1,5 @@
 package standard;
+
 import java.util.Vector;
 
 import lejos.nxt.comm.Bluetooth;
@@ -17,21 +18,21 @@ public class ConnectionLoop extends Loop
 		super(tickTime);
 
 		agents = new Vector<Agent>();
-		new UpdateLoop(tickTime, agents).start();	
+		new UpdateLoop(tickTime, agents).start();
 	}
-	
+
 	public void connect()
-	{	
-		
+	{
+
 		System.out.println("waiting connection");
 		NXTConnection connection = Bluetooth.waitForConnection();
 		brickCon = new BrickConnection(connection.openDataOutputStream(),
 				connection.openDataInputStream());
 		brickCon.start();
-		
+
 		connected = true;
 	}
-	
+
 	public void addAgent(Agent agent)
 	{
 		agents.addElement(agent);
@@ -40,8 +41,8 @@ public class ConnectionLoop extends Loop
 
 	@Override
 	public void loop()
-	{	
-		//read from Bluetooth stream
+	{
+		// read from Bluetooth stream
 		while (connected && !brickCon.isEmpty())
 		{
 			String s = brickCon.receiveData();
@@ -57,13 +58,16 @@ public class ConnectionLoop extends Loop
 					if (!a.hasID())
 					{
 						a.setID(Integer.parseInt(first(s)));
-						System.out.println("ID: "+a.getID());
-						System.out.println("agent: "+a.name());
-						brickCon.sendData("SETNAME$"+a.getID()+"$"+a.name()+"$");
-						brickCon.sendData("SETSTATE$F$"+a.getID()+"$"+a.currentState().name()+"$");
+						System.out.println("ID: " + a.getID());
+						System.out.println("agent: " + a.name());
+						brickCon.sendData("SETNAME$" + a.getID() + "$"
+								+ a.name() + "$");
+						brickCon.sendData("SETSTATE$F$" + a.getID() + "$"
+								+ a.currentState().name() + "$");
 						break;
 					}
 				}
+
 			}
 
 		}

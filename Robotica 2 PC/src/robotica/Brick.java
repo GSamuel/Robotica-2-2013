@@ -6,7 +6,7 @@ import java.util.Iterator;
 import loop.Simulation;
 import connection.NXTConnection;
 
-public class Brick
+public class Brick implements AgentObserver
 {
 	private NXTConnection nxtCon;
 	private Simulation sim;
@@ -53,6 +53,7 @@ public class Brick
 			case "NEW":
 				Agent a = new SimAgent();
 				agents.add(a);
+				a.registerObserver(this);
 				sim.simulationModel().addAgent(a);
 				nxtCon.sendData("NEW$".concat(String.valueOf(a.getID()))
 						.concat("$"));
@@ -63,19 +64,25 @@ public class Brick
 				s = left(s);
 				String stateName = first(s);
 				s = left(s);
-				
-				getAgentWithId(agentID).setState(new SimState(stateName));
-				
-				System.out.println("State changed of "+getAgentWithId(agentID).name()+" into "+ getAgentWithId(agentID).currentState().name());
+
+				Agent age = getAgentWithId(agentID);
+				age.setState(new SimState(stateName));
+				age.setChanged();
+				age.notifyObservers();
+
+				System.out.println("State changed of "
+						+ getAgentWithId(agentID).name() + " into "
+						+ getAgentWithId(agentID).currentState().name());
 				break;
 			case "SETNAME":
-				
+
 				int Aid = Integer.parseInt(first(s));
 				Agent ag = getAgentWithId(Aid);
 				s = left(s);
 				ag.setName(first(s));
-				
-				System.out.println("agent with id "+ Aid+" name changed into "+getAgentWithId(Aid).name());
+
+				System.out.println("agent with id " + Aid
+						+ " name changed into " + getAgentWithId(Aid).name());
 
 				break;
 			case "ADDCSTATE":
@@ -85,23 +92,30 @@ public class Brick
 				s = left(s);
 				String targetState = first(s);
 				s = left(s);
-				
-				getAgentWithId(agID).addCoupledState(new CoupledState(ownState, targetState));
-				
-				System.out.println("Coupled State added to "+getAgentWithId(agID).name()+": "+ownState+" --- "+targetState);
-				
+
+				Agent agentje = getAgentWithId(agID);
+				agentje.addCoupledState(new CoupledState(ownState, targetState));
+
+				agentje.setChanged();
+				agentje.notifyObservers();
+
+				System.out.println("Coupled State added to "
+						+ getAgentWithId(agID).name() + ": " + ownState
+						+ " --- " + targetState);
+
 				break;
-			default :
-				System.out.println("can't process stream data: "+ first+ "$" + s);
+			default:
+				System.out.println("can't process stream data: " + first + "$"
+						+ s);
 				break;
 			}
 
 		}
-		
-		if(!nxtCon.isWorking())
+
+		if (!nxtCon.isWorking())
 		{
 			Iterator<Agent> it = agents.iterator();
-			while(it.hasNext())
+			while (it.hasNext())
 			{
 				Agent a = it.next();
 				sim.simulationModel().removeAgent(a);
@@ -129,5 +143,35 @@ public class Brick
 		}
 
 		return null;
+	}
+
+	@Override
+	public void update(Agent a)
+	{
+		for (int i = 0; i < sim.simulationModel().amountAgents(); i++)
+		{
+			Agent b = sim.simulationModel().getAgentAt(i);
+			for (int j = 0; j < a.coupledStateSize(); j++)
+			{
+				if (a.getCoupledState(j).getTargetState().name()
+						.equals(b.currentState().name()))
+				{
+
+					nxtCon.sendData("CSTATE$"+b.currentState().name()+"$"+b.name());
+					System.out.println(a.getCoupledState(j).getTargetState()
+							.name()
+							+ " " + b.currentState().name());
+				}
+			}
+
+			for (int j = 0; j < b.coupledStateSize(); j++)
+			{
+				if (b.getCoupledState(j).getTargetState().name()
+						.equals(a.currentState().name()))
+					System.out.println(b.getCoupledState(j).getTargetState()
+							.name()
+							+ " " + a.currentState().name());
+			}
+		}
 	}
 }
