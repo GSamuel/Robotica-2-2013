@@ -10,7 +10,7 @@ public class TestAgent extends Agent
 	public TestAgent()
 	{
 		super("Agent P", new SimState("IDLE"));
-		this.addCoupledState(new CoupledState("IDLE", "IDLE"));
+		this.addCoupledState(new CoupledState("IDLE", "IDLE", "POEP"));
 	}
 
 	@Override

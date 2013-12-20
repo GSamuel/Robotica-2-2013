@@ -6,4 +6,8 @@ public class SimState extends State
 	{
 		super(name);
 	}
+	public SimState (String name, String target)
+	{
+		super(name,target);
+	}
 }

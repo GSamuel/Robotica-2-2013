@@ -2,7 +2,7 @@ package robotica;
 
 public class CoupledState
 {
-	private State own, target;
+	private State own, target, newState;
 	public CoupledState(State own, State target)
 	{
 		this.own = own;
@@ -15,6 +15,13 @@ public class CoupledState
 		this.target = new SimState(target);
 	}
 	
+	public CoupledState(String own, String target, String newState)
+	{
+		this.own = new SimState(own);
+		this.target = new SimState(target);
+		this.newState = new SimState(newState);
+	}
+	
 	public State getOwnState()
 	{
 		return own;
@@ -23,6 +30,11 @@ public class CoupledState
 	public State getTargetState()
 	{
 		return target;
+	}
+	
+	public State getNewState()
+	{
+		return newState;
 	}
 	
 	public boolean isSame(CoupledState cstate)

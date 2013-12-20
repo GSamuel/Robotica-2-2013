@@ -157,7 +157,7 @@ public class Brick implements AgentObserver
 						.equals(b.currentState().name()))
 				{
 
-					nxtCon.sendData("CSTATE$"+b.currentState().name()+"$"+b.name());
+					nxtCon.sendData("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
 					System.out.println(a.getCoupledState(j).getTargetState()
 							.name()
 							+ " " + b.currentState().name());

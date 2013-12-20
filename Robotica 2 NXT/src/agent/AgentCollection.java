@@ -3,6 +3,8 @@ package agent;
 import java.util.Vector;
 
 import robotica.Agent;
+import robotica.CoupledState;
+import robotica.SimState;
 
 public class AgentCollection
 {
@@ -42,8 +44,38 @@ public class AgentCollection
 					break;
 				}
 			}
+			break;
 		case "CSTATE":
+			int id = Integer.parseInt(first(data));
+			System.out.println(first(data));
+			System.out.println(data);
 			data = left(data);
+			System.out.println(data);
+			for (int i = 0; i < agents.size(); i++)
+			{
+				Agent a = agents.elementAt(i);
+				if(a.getID() == id)
+				{
+					first(data);
+					//String name = first(data);
+					/*
+					data = left(data);
+					
+					String target = first(data);
+					data = left(data);
+
+					for(int j = 0; j < a.coupledStateSize(); j++)
+					{
+						CoupledState sta = a.getCoupledState(j);
+						if(sta.getTargetState().equals(name))
+						{
+							a.setState(new SimState(sta.getNewState().name(), target));
+							a.setChanged();
+						}
+					}*/
+				}
+
+			}
 		}
 	}
 
