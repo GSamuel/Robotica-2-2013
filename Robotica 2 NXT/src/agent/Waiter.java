@@ -7,6 +7,7 @@ import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.addon.ColorHTSensor;
 import robotica.Agent;
+import robotica.CoupledState;
 import robotica.SimState;
 import robotica.State;
 
@@ -29,6 +30,7 @@ public class Waiter extends Agent
 	public Waiter()
 	{
 		super("Waiter", new SimState("IDLE"));
+		this.addCoupledState(new CoupledState("IDLE", "NEUTRAAL", "YAY_KLANT_GEVONDEN"));
 	}
 
 	@Override

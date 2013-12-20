@@ -168,9 +168,13 @@ public class Brick implements AgentObserver
 			{
 				if (b.getCoupledState(j).getTargetState().name()
 						.equals(a.currentState().name()))
+				{
+					b.setChanged();
+					b.notifyObservers();
 					System.out.println(b.getCoupledState(j).getTargetState()
 							.name()
 							+ " " + a.currentState().name());
+				}
 			}
 		}
 	}

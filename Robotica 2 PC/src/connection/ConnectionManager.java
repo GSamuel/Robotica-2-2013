@@ -63,7 +63,7 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 
 			try
 			{
-				nxtInfo = BTComm.search("GoodWaiter");
+				nxtInfo = BTComm.search(null);
 			} catch (NXTCommException e)
 			{
 				System.out.println("Cant search for devices");

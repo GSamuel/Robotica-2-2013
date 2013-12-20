@@ -1,6 +1,7 @@
 package robotica;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 public abstract class Agent
 {
@@ -9,7 +10,7 @@ public abstract class Agent
 	private boolean hasID = false, hasName = false;
 	private State currentState;
 	private ArrayList<State> states;
-	private ArrayList<CoupledState> cStates;
+	private Vector<CoupledState> cStates;
 	private ArrayList<AgentObserver> observers;
 	private boolean changed = false;
 	private boolean sendAll = false;
@@ -18,7 +19,7 @@ public abstract class Agent
 	{
 		states = new ArrayList<State>();
 		observers = new ArrayList<AgentObserver>();
-		cStates = new ArrayList<CoupledState>();
+		cStates = new Vector<CoupledState>();
 		setName(name);
 		currentState = state;
 		sendAll = true;
