@@ -36,8 +36,8 @@ public class Customer extends Agent {
 		switch (currentState().name()) {
 		case "NEUTRAAL":
 			neutraal();
-			 this.setState(new SimState("WBESTELLEN"));
-			 setChanged();
+		//	 this.setState(new SimState("WBESTELLEN"));
+		//	 setChanged();
 			break;
 		case "WBESTELLEN":
 			wBestellen();			
