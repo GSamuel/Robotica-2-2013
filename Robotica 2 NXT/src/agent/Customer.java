@@ -7,6 +7,7 @@ import robotica.Agent;
 import robotica.SimState;
 
 public class Customer extends Agent {
+	private String name;
 	private boolean init;
 	private long starttime;
 	private long currenttime;
@@ -15,8 +16,8 @@ public class Customer extends Agent {
 	//Motor.A vervangen door motor, zodat een customer aan een specifieke motor gekoppeld kan worden.   Yay dynamischheid
 	private NXTRegulatedMotor motor;
 
-	public Customer(NXTRegulatedMotor motor) {
-		super("Customer", new SimState("NEUTRAAL"));
+	public Customer(NXTRegulatedMotor motor, String name) {
+		super(name, new SimState("IDLE"));
 		init = true;
 		starttime = System.currentTimeMillis();
 		currenttime = System.currentTimeMillis();
@@ -34,15 +35,16 @@ public class Customer extends Agent {
 		stopwatch = currenttime - starttime;
 		//System.out.println(stopwatch);
 		switch (currentState().name()) {
-		case "NEUTRAAL":
+		case "IDLE":
 			neutraal();
-		//	 this.setState(new SimState("WBESTELLEN"));
-		//	 setChanged();
+			 this.setState(new SimState("WBESTELLEN"));
+			 setChanged();
 			break;
 		case "WBESTELLEN":
-			wBestellen();			
+			wBestellen();
+			/*
 			this.setState(new SimState("WETEN"));
-			setChanged();
+			setChanged();*/
 			break;
 		case "WETEN":
 			wEten();
@@ -56,7 +58,7 @@ public class Customer extends Agent {
 			break;
 		case "WBETALEN":
 			wBetalen();
-			this.setState(new SimState("NEUTRAAL"));
+			this.setState(new SimState("IDLE"));
 			setChanged();
 			break;
 		}
@@ -66,7 +68,6 @@ public class Customer extends Agent {
 	private void neutraal() {
 			motor.setSpeed(720);
 			motor.rotateTo(0);
-			System.out.println("NEUTRAAL");
 			Random rand= new Random();
 			try {
 				Thread.sleep(rand.nextInt(2000));
@@ -79,7 +80,6 @@ public class Customer extends Agent {
 	private void wBestellen() {
 			motor.setSpeed(720);
 			motor.rotateTo(90);
-			System.out.println("wBestellen");
 			Random rand= new Random();
 			try {
 				Thread.sleep(rand.nextInt(2000)+1000);
@@ -92,7 +92,6 @@ public class Customer extends Agent {
 	private void wEten() {
 			motor.setSpeed(720);
 			motor.rotateTo(180);
-			System.out.println("wEten");
 			Random rand= new Random();
 			try {
 				Thread.sleep(rand.nextInt(2000));
@@ -105,7 +104,6 @@ public class Customer extends Agent {
 	private void eten() {
 			motor.setSpeed(300);
 			motor.forward();
-			System.out.println("ETEN");
 			Random rand= new Random();
 			try {
 				Thread.sleep(rand.nextInt(5000));
@@ -122,7 +120,6 @@ public class Customer extends Agent {
 			motor.resetTachoCount();
 			motor.setSpeed(720);
 			motor.rotateTo(270);
-			System.out.println("wBetalen");
 			Random rand= new Random();
 			try {
 				Thread.sleep(rand.nextInt(2000));

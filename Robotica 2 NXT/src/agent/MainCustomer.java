@@ -17,16 +17,16 @@ public class MainCustomer
 		Communicator com = new Communicator(col);
 	
 		
-		Customer cus= new Customer (Motor.A);
+		Customer cus= new Customer (Motor.A, "Klant 1");
 		col.addAgent(cus);
 		com.observe(cus);
 		
 		
-		cus= new Customer (Motor.B);
+		cus= new Customer (Motor.B, "Klant 2");
 		col.addAgent(cus);
 		com.observe(cus);
 		
-		cus= new Customer (Motor.C);
+		cus= new Customer (Motor.C, "Klant 3");
 		col.addAgent(cus);
 		com.observe(cus);
 

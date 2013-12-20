@@ -30,7 +30,7 @@ public class Waiter extends Agent
 	public Waiter()
 	{
 		super("Waiter", new SimState("IDLE"));
-		this.addCoupledState(new CoupledState("IDLE", "NEUTRAAL", "YAY_KLANT_GEVONDEN"));
+		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN", "OPNEMEN_BESTELLING"));
 	}
 
 	@Override
@@ -39,6 +39,11 @@ public class Waiter extends Agent
 		State state = this.currentState();
 		switch (state.name())
 		{
+		case "IDLE":
+			break;
+		case "OPNEMEN_BESTELLING":
+			rijNaarKlant();
+			break;
 		case "START":
 			Button.waitForAnyPress();
 			this.setState(new SimState("FOLLOW_PATH"));
@@ -62,6 +67,24 @@ public class Waiter extends Agent
 		else
 		{
 			return false;
+		}
+	}
+	
+	private void rijNaarKlant()
+	{
+		if (onPath())
+		{
+			Motor.A.setSpeed(150);
+			Motor.B.setSpeed(300);
+			Motor.A.forward();
+			Motor.B.forward();
+		} else
+		{
+
+			Motor.A.setSpeed(300);
+			Motor.B.setSpeed(150);
+			Motor.A.forward();
+			Motor.B.forward();
 		}
 	}
 
