@@ -154,7 +154,7 @@ public class Brick implements AgentObserver
 			for (int j = 0; j < a.coupledStateSize(); j++)
 			{
 				if (a.getCoupledState(j).getTargetState().name()
-						.equals(b.currentState().name()))
+						.equals(b.currentState().name()) && a.getCoupledState(j).getOwnState().name().equals(a.currentState().name()))
 				{
 
 					nxtCon.sendData("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
