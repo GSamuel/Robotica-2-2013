@@ -1,6 +1,7 @@
 package agent;
 
 import lejos.nxt.Button;
+import lejos.nxt.ColorSensor.Color;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
@@ -29,7 +30,7 @@ public class Waiter extends Agent
 
 	public Waiter()
 	{
-		super("Waiter", new SimState("IDLE"));
+		super("Waiter", new SimState("OPNEMEN_BESTELLING"));
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN", "OPNEMEN_BESTELLING"));
 	}
 
@@ -62,12 +63,15 @@ public class Waiter extends Agent
 
 	private boolean onPath()
 	{
+		lejos.robotics.Color col = color.getColor();
+		return (col.getBlue() <20 && col.getGreen() < 20 && col.getRed() < 20);
+		/*
 		if (color.getColorID() == 3)
 			return true;
 		else
 		{
 			return false;
-		}
+		}*/
 	}
 	
 	private void rijNaarKlant()
