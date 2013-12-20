@@ -28,7 +28,7 @@ public class Waiter extends Agent
 
 	public Waiter()
 	{
-		super("Waiter", new SimState("START"));
+		super("Waiter", new SimState("IDLE"));
 	}
 
 	@Override
