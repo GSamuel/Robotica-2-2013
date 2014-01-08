@@ -26,6 +26,13 @@ public class Waiter extends Agent
 	boolean turnDirection = true; // left if true, right if false
 	private TouchSensor touch;
 	private UltrasonicSensor sonar;
+	
+	private final int[] CustColor = {1,2,3};
+	private final int   CookColor = 4;
+	private final int   FieldColor = 6;
+	private final int   pathInner = 7, pathOuter = 0;
+	
+	
 	ColorHTSensor color = new ColorHTSensor(SensorPort.S1);
 
 	public Waiter()
@@ -60,22 +67,55 @@ public class Waiter extends Agent
 
 		notifyObservers();
 	}
+	
+	private boolean onColor(int num)
+	{
+		return color.getColorID() == num;
+	}
+	
+	private boolean onColor(int[] num)
+	{
+		boolean bool = false;
+		for(int i = 0; i < num.length; i++)
+			bool = bool || color.getColorID() == num[i];
+		
+		return bool;
+	}
 
 	private boolean onPath()
 	{
 		lejos.robotics.Color col = color.getColor();
 		return (col.getBlue() <20 && col.getGreen() < 20 && col.getRed() < 20);
-		/*
-		if (color.getColorID() == 3)
-			return true;
-		else
-		{
-			return false;
-		}*/
 	}
 	
 	private void rijNaarKlant()
 	{
+		lejos.robotics.Color col = color.getColor();
+		
+		if(col.getColor() == 7)
+		{
+			Motor.A.setSpeed(250);
+			Motor.B.setSpeed(250);
+			Motor.A.forward();
+			Motor.B.forward();
+		}
+		else if (col.getColor() == 6)
+		{
+			Motor.A.setSpeed(200);
+			Motor.B.setSpeed(200);
+			Motor.A.forward();
+			Motor.B.backward();
+		}
+		else
+		{
+			Motor.A.setSpeed(200);
+			Motor.B.setSpeed(200);
+			Motor.A.backward();
+			Motor.B.forward();
+		}
+
+		
+		/*
 		if (onPath())
 		{
 			Motor.A.setSpeed(150);
@@ -89,7 +129,7 @@ public class Waiter extends Agent
 			Motor.B.setSpeed(150);
 			Motor.A.forward();
 			Motor.B.forward();
-		}
+		}*/
 	}
 
 	private void follow_path()
