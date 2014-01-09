@@ -1,6 +1,5 @@
 package agent;
 
-import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
@@ -16,8 +15,13 @@ public class Waiter extends Agent
 	private TouchSensor touch;
 	private UltrasonicSensor sonar;
 
-	private int first = -1, snd = -1;
-	private int richting = -1;
+	private int first;
+	private int richting;
+
+	private boolean customerFound;
+	private int currentCustomer;
+
+	private boolean turn = false;
 
 	private final int[] custColor = { 1, 2, 3 };
 	private final int cookColor = 4;
@@ -33,6 +37,17 @@ public class Waiter extends Agent
 				"OPNEMEN_BESTELLING"));
 
 		this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
+
+		init();
+	}
+
+	private void init()
+	{
+		first = -1;
+		richting = -1;
+		customerFound = false;
+		currentCustomer = -1;
+		turn = false;
 	}
 
 	@Override
@@ -46,6 +61,8 @@ public class Waiter extends Agent
 		case "OPNEMEN_BESTELLING":
 			if (richting == -1)
 				checkRichting();
+			else if (!customerFound)
+				zoekKlant();
 			else
 				rijNaarKlant();
 			break;
@@ -73,7 +90,7 @@ public class Waiter extends Agent
 		if (first == -1 && (onColor(pathInner) || onColor(pathOuter)))
 		{
 			first = color.getColorID();
-		} else if (snd == -1)
+		} else
 		{
 			Motor.A.setSpeed(200);
 			Motor.B.setSpeed(200);
@@ -87,45 +104,126 @@ public class Waiter extends Agent
 				else if (onColor(fieldColor))
 					richting = 1;
 
-			} else
-			{
-				if (first == pathOuter)
-				{
-					if (onColor(pathInner))
-						richting = 1;
-					else if (onColor(fieldColor))
-						richting = 2;
-
-				}
 			}
+
+			else if (first == pathOuter)
+			{
+				if (onColor(pathInner))
+					richting = 1;
+				else if (onColor(fieldColor))
+					richting = 3;
+
+			}
+
 		}
 	}
 
-	private void rijNaarKlant()
+	private void zoekKlant()
 	{
-		
-		
+		if (currentCustomer == -1)
+		{
 
-		if (onColor(pathInner))
+			if (currentState().target().equalsIgnoreCase("KLANT 1"))
+				currentCustomer = custColor[0];
+			if (currentState().target().equalsIgnoreCase("KLANT 2"))
+				currentCustomer = custColor[1];
+			if (currentState().target().equalsIgnoreCase("KLANT 3"))
+				currentCustomer = custColor[2];
+		}
+
+		if (richting == 3)
+		{
+
+			Motor.A.setSpeed(200);
+			Motor.B.setSpeed(200);
+			Motor.A.backward();
+			Motor.B.forward();
+
+			if (onColor(pathOuter))
+				richting = 2;
+		} else if (onColor(pathInner))
 		{
 			Motor.A.setSpeed(200);
 			Motor.B.setSpeed(200);
 			Motor.A.forward();
 			Motor.B.forward();
-		} else if (onColor(pathOuter) && richting == 1 || onColor(fieldColor) && richting == 2)
+		} else if (onColor(pathOuter) && richting == 1 || onColor(fieldColor)
+				&& richting == 2)
 		{
 			Motor.A.setSpeed(200);
 			Motor.B.setSpeed(200);
 			Motor.A.forward();
 			Motor.B.backward();
-		}
-		else if (onColor(fieldColor) && richting == 1 || onColor(pathOuter) && richting == 2)
+		} else if (onColor(fieldColor) && richting == 1 || onColor(pathOuter)
+				&& richting == 2)
 		{
 			Motor.A.setSpeed(200);
 			Motor.B.setSpeed(200);
 			Motor.A.backward();
 			Motor.B.forward();
-			
+
+		}
+
+		if (onColor(currentCustomer))
+		{
+			customerFound = true;
+			turn = true;
+		}
+
+	}
+
+	private void rijNaarKlant()
+	{
+		Motor.A.setSpeed(150);
+		Motor.B.setSpeed(150);
+
+		if (turn)
+		{
+			if (richting == 1)
+			{
+				Motor.A.forward();
+				Motor.B.backward();
+			} else if (richting == 2)
+			{
+				Motor.A.backward();
+				Motor.B.forward();
+			}
+			if(onColor(fieldColor))
+				turn = false;
+		} else if (richting == 1)
+		{
+			if(onColor(currentCustomer))
+			{
+				Motor.A.setSpeed(200);
+				Motor.A.forward();
+				Motor.B.suspendRegulation();
+			}
+			else if(onColor(fieldColor))
+			{
+				Motor.A.suspendRegulation();
+				Motor.B.setSpeed(200);
+				Motor.B.forward();
+			}
+		} else if (richting == 2)
+		{
+			if(onColor(currentCustomer))
+			{
+				Motor.A.suspendRegulation();
+				Motor.B.setSpeed(200);
+				Motor.B.forward();
+			}
+			else if(onColor(fieldColor))
+			{
+				Motor.A.setSpeed(200);
+				Motor.A.forward();
+				Motor.B.suspendRegulation();
+			}
+		}
+		
+		if(onColor(pathOuter))
+		{
+			Motor.A.suspendRegulation();
+			Motor.B.suspendRegulation();
 		}
 	}
 }
