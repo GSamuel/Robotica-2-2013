@@ -16,7 +16,7 @@ public class CustomerBehavior {
 
 	public void idle() {
 		try {
-			int random = randInt(2 * wachttijd, 4 * wachttijd);
+			int random = 1000 * randInt(2 * wachttijd, 4 * wachttijd);
 			Thread.sleep(random);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -28,7 +28,7 @@ public class CustomerBehavior {
 
 	public void eten() {
 		try {
-			int random = randInt(20 * wachttijd, 40 * wachttijd);
+			int random = 1000 * randInt(20 * wachttijd, 40 * wachttijd);
 			Thread.sleep(random);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
