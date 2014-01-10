@@ -12,12 +12,16 @@ public class Customer extends Agent {
 	private long starttime;
 	private long currenttime;
 	private long stopwatch;
+	private CustomerBehavior behavior;
+	private int wachttijd;
 	
 	//Motor.A vervangen door motor, zodat een customer aan een specifieke motor gekoppeld kan worden.   Yay dynamischheid
 	private NXTRegulatedMotor motor;
 
 	public Customer(NXTRegulatedMotor motor, String name) {
 		super(name, new SimState("IDLE"));
+		this.wachttijd = 3;
+		this.behavior = new CustomerBehavior(wachttijd);
 		init = true;
 		starttime = System.currentTimeMillis();
 		currenttime = System.currentTimeMillis();
@@ -36,57 +40,35 @@ public class Customer extends Agent {
 		//System.out.println(stopwatch);
 		switch (currentState().name()) {
 		case "IDLE":
-			neutraal();
-			 this.setState(new SimState("WBESTELLEN"));
-			 setChanged();
+			idle();
 			break;
 		case "WBESTELLEN":
 			wBestellen();
-			/*
-			this.setState(new SimState("WETEN"));
-			setChanged();*/
 			break;
 		case "WETEN":
 			wEten();
-			this.setState(new SimState("ETEN"));
-			setChanged();
 			break;
 		case "ETEN":
 			eten();
-			this.setState(new SimState("WBETALEN"));
-			setChanged();
 			break;
 		case "WBETALEN":
 			wBetalen();
-			this.setState(new SimState("IDLE"));
-			setChanged();
 			break;
 		}
 		notifyObservers();
 	}
 
-	private void neutraal() {
+	private void idle() {
 			motor.setSpeed(720);
 			motor.rotateTo(0);
-			Random rand= new Random();
-			try {
-				Thread.sleep(rand.nextInt(2000));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			behavior.idle();
+			this.setState(new SimState("WBESTELLEN"));
+			setChanged();
 	}
 
 	private void wBestellen() {
 			motor.setSpeed(720);
 			motor.rotateTo(90);
-			Random rand= new Random();
-			try {
-				Thread.sleep(rand.nextInt(2000)+1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 	}
 
 	private void wEten() {
@@ -134,7 +116,7 @@ public class Customer extends Agent {
 /*
  * 5 states:
  * 
- * -Neutraal "NEUTRAAL" Niks boven. -Wachten op bestellen: "WBESTELLEN" Rood
+ * -idle"IDLE" Niks boven. -Wachten op bestellen: "WBESTELLEN" Rood
  * boven. -Wachten op eten: "WETEN" Blauw boven. -Eten: "ETEN" Motor draait
  * rond. -Betalen: "WBETALEN" Zwart boven.
  */
