@@ -16,20 +16,22 @@ public class Waiter extends Agent
 	private TouchSensor touch;
 	private UltrasonicSensor sonar;
 
+	private int currentStep = 0;
+
 	private int first;
 	private int richting;
 
-	private boolean customerFound;
 	private int currentCustomer;
+	private boolean hasBall;
 
 	private boolean turn = false;
-	private boolean grabbing = true;
+	private boolean moveBack = true;
 
 	private final int[] custColor = { 1, 2, 3 };
 	private final int cookColor = 4;
 	private final int fieldColor = 6;
 	private final int pathInner = 7, pathOuter = 0;
-	
+
 	ColorHistory color = new ColorHistory(SensorPort.S1);
 
 	public Waiter()
@@ -37,10 +39,10 @@ public class Waiter extends Agent
 		super("Waiter", new SimState("IDLE"));
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN",
 				"OPNEMEN_BESTELLING"));
-		this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 2"));
-		
+		this.setState(new SimState("BRENG_VOEDSEL_NAAR_KLANT", "KLANT 1"));
+
 		color.start();
-		
+
 		init();
 	}
 
@@ -48,44 +50,122 @@ public class Waiter extends Agent
 	{
 		first = -1;
 		richting = -1;
-		customerFound = false;
 		currentCustomer = -1;
 		turn = false;
-		grabbing = false;
+		moveBack = false;
+		hasBall = false;
+
+		currentStep = 0;
 
 		Motor.C.setSpeed(100);
 		Motor.C.rotateTo(-360);
 		Motor.C.resetTachoCount();
-		
-		openGrabber();
+
+		closeGrabber();
+	}
+
+	private void reset()
+	{
+		first = -1;
+		richting = -1;
+		currentStep = 0;
 	}
 
 	@Override
 	public void update()
 	{
 		State state = this.currentState();
+
+		if (richting == -1)
+			checkRichting();
+
 		switch (state.name())
 		{
 		case "IDLE":
 			break;
 		case "OPNEMEN_BESTELLING":
-			if (richting == -1)
-				checkRichting();
-			else if (!customerFound)
+			if (currentStep == 0)
 				zoekKlant();
-			else
+			else if (currentStep == 1)
+			{
+				openGrabber();
+				currentStep++;
+			} else if (currentStep == 2)
 				rijNaarKlant();
+			else if (currentStep == 3)
+			{
+				closeGrabber();
+				hasBall = true;
+				moveBack = true;
+				currentStep++;
+			} else if (currentStep == 4)
+				rijNaarBaan(true);
+			else if (currentStep == 5)
+				zoekKok();
+			else if (currentStep == 6)
+				rijNaarKok();
+			else if (currentStep == 7)
+			{
+				openGrabber();
+				hasBall = false;
+				moveBack = true;
+				currentStep++;
+			}
+			break;
+
+		case "BRENG_VOEDSEL_NAAR_KLANT":
+			if (currentStep == 0)
+				zoekKok();
+			else if (currentStep == 1)
+			{
+				openGrabber();
+				currentStep++;
+			} else if (currentStep == 2)
+				rijNaarKok();
+			else if (currentStep == 3)
+			{
+				closeGrabber();
+				hasBall = true;
+				moveBack = true;
+				currentStep++;
+			} else if (currentStep == 4)
+				rijNaarBaan(false);
+			else if (currentStep == 5)
+				zoekKlant();
+			else if (currentStep == 6)
+				rijNaarKlant();
+			else if (currentStep == 7)
+			{
+				openGrabber();
+				hasBall = false;
+				moveBack = true;
+				currentStep++;
+			}
+			else if (currentStep == 8)
+			{
+				rijNaarBaan(true);
+			}
+			else if (currentStep == 9)
+			{
+				this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
+				currentStep = 0;
+				System.out.println("yay");
+			}
+
 			break;
 		}
 
 		notifyObservers();
 	}
 
-	private boolean onColorSafe(int num)
+	private boolean onColor(int num, boolean safe)
 	{
-		return true;
+		if (safe)
+			return color.getSafeColorID() == num;
+		else
+			return onColor(num);
 	}
-	
+
 	private boolean onColor(int num)
 	{
 		return color.getColorID() == num;
@@ -93,9 +173,20 @@ public class Waiter extends Agent
 
 	private boolean onColor(int[] num)
 	{
+		return onColor(num, false);
+	}
+
+	private boolean onColor(int[] num, boolean safe)
+	{
 		boolean bool = false;
 		for (int i = 0; i < num.length; i++)
-			bool = bool || color.getColorID() == num[i];
+		{
+			if (safe)
+				bool = bool || color.getSafeColorID() == num[i];
+
+			else
+				bool = bool || color.getColorID() == num[i];
+		}
 
 		return bool;
 	}
@@ -130,22 +221,17 @@ public class Waiter extends Agent
 
 			}
 
+			if (richting != -1)
+			{
+				Motor.A.stop();
+				Motor.B.stop();
+			}
+
 		}
 	}
 
-	private void zoekKlant()
+	private void volgPad()
 	{
-		if (currentCustomer == -1)
-		{
-
-			if (currentState().target().equalsIgnoreCase("KLANT 1"))
-				currentCustomer = custColor[0];
-			if (currentState().target().equalsIgnoreCase("KLANT 2"))
-				currentCustomer = custColor[1];
-			if (currentState().target().equalsIgnoreCase("KLANT 3"))
-				currentCustomer = custColor[2];
-		}
-
 		if (richting == 3)
 		{
 
@@ -178,107 +264,128 @@ public class Waiter extends Agent
 			Motor.B.forward();
 
 		}
+	}
 
-		if (onColor(currentCustomer))
+	private void zoekKok()
+	{
+		if (currentCustomer == -1)
 		{
-			customerFound = true;
+
+			if (currentState().target().equalsIgnoreCase("KLANT 1"))
+				currentCustomer = custColor[0];
+			if (currentState().target().equalsIgnoreCase("KLANT 2"))
+				currentCustomer = custColor[1];
+			if (currentState().target().equalsIgnoreCase("KLANT 3"))
+				currentCustomer = custColor[2];
+		}
+
+		volgPad();
+
+		if (onColor(cookColor, true))
+		{
+			currentStep++;
+			turn = true;
+		}
+	}
+
+	private void zoekKlant()
+	{
+		if (currentCustomer == -1)
+		{
+
+			if (currentState().target().equalsIgnoreCase("KLANT 1"))
+				currentCustomer = custColor[0];
+			if (currentState().target().equalsIgnoreCase("KLANT 2"))
+				currentCustomer = custColor[1];
+			if (currentState().target().equalsIgnoreCase("KLANT 3"))
+				currentCustomer = custColor[2];
+		}
+
+		volgPad();
+
+		if (onColor(currentCustomer, true))
+		{
+			currentStep++;
 			turn = true;
 		}
 
 	}
 
-	private void rijNaarKlant()
+	private void rijNaarLocatie(boolean isKlant)
 	{
-		if(turn)
+
+		if (turn)
 		{
 			forward();
-			turnNineTeen(richting == 2);
-			forward();
-			turn  = false;
+			if (isKlant)
+				turnNineTeen(richting == 2);
+			else
+				turnNineTeen(richting == 1);
+			forward(400);
+			turn = false;
 		}
-		
-		if(onColor(currentCustomer))
+
+		if (onColor(currentCustomer) && isKlant || onColor(cookColor)
+				&& !isKlant)
 		{
 			Motor.A.setSpeed(50);
 			Motor.B.setSpeed(200);
-		}
-		else if(onColor(fieldColor))
+		} else if (onColor(fieldColor))
 		{
 			Motor.A.setSpeed(220);
 			Motor.B.setSpeed(20);
 		}
-		
+
 		Motor.A.forward();
 		Motor.B.forward();
-		
-		if(onColor(pathOuter))
+
+		if (onColor(pathOuter) && isKlant || onColor(pathInner) && !isKlant)
 		{
-			closeGrabber();
+			currentStep++;
 			Motor.A.stop();
 			Motor.B.stop();
-			try
-			{
-				Thread.sleep(4000);
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
-		
-		
-		
-		
-		/*
-		Motor.A.setSpeed(150);
-		Motor.B.setSpeed(150);
+	}
 
-		if (turn)
+	private void rijNaarKok()
+	{
+		rijNaarLocatie(false);
+	}
+
+	private void rijNaarKlant()
+	{
+		rijNaarLocatie(true);
+	}
+
+	private void rijNaarBaan(boolean isKlant)
+	{
+		if (moveBack)
 		{
-			if (richting == 1)
-			{
-				Motor.A.forward();
-				Motor.B.backward();
-			} else if (richting == 2)
-			{
-				Motor.A.backward();
-				Motor.B.forward();
-			}
-			if (onColor(fieldColor))
-				turn = false;
-		} else if (richting == 1)
-		{
-			if (onColor(currentCustomer))
-			{
-				Motor.A.setSpeed(200);
-				Motor.A.forward();
-				Motor.B.suspendRegulation();
-			} else if (onColor(fieldColor))
-			{
-				Motor.A.suspendRegulation();
-				Motor.B.setSpeed(200);
-				Motor.B.forward();
-			}
-		} else if (richting == 2)
-		{
-			if (onColor(currentCustomer))
-			{
-				Motor.A.suspendRegulation();
-				Motor.B.setSpeed(200);
-				Motor.B.forward();
-			} else if (onColor(fieldColor))
-			{
-				Motor.A.setSpeed(200);
-				Motor.A.forward();
-				Motor.B.suspendRegulation();
-			}
+			backward(400);
+			moveBack = false;
 		}
 
-		if (onColor(pathOuter))
+		Motor.A.setSpeed(160);
+		Motor.B.setSpeed(160);
+		Motor.A.backward();
+		Motor.B.backward();
+
+		if (onColor(pathOuter) && isKlant || onColor(pathInner) && !isKlant)
 		{
-			Motor.A.suspendRegulation();
-			Motor.B.suspendRegulation();
-		}*/
+			if (isKlant)
+				forward();
+			else
+				forward(1000);
+			turnNineTeen(true);
+			forward(300);
+			currentStep++;
+
+			Motor.A.stop();
+			Motor.B.stop();
+			richting = -1;
+
+		}
+
 	}
 
 	private void forward()
@@ -303,6 +410,23 @@ public class Waiter extends Agent
 		}
 	}
 
+	private void backward(int ms)
+	{
+		Motor.A.setSpeed(160);
+		Motor.B.setSpeed(160);
+		Motor.A.backward();
+		Motor.B.backward();
+		try
+		{
+			Thread.sleep(ms);
+			Motor.A.stop();
+			Motor.B.stop();
+			Thread.sleep(50);
+		} catch (InterruptedException e)
+		{
+		}
+	}
+
 	private void turnNineTeen(boolean left)
 	{
 		try
@@ -310,7 +434,7 @@ public class Waiter extends Agent
 			Motor.A.stop();
 			Motor.B.stop();
 			Thread.sleep(50);
-			
+
 			Motor.A.setSpeed(200);
 			Motor.B.setSpeed(200);
 			if (left)
@@ -324,19 +448,25 @@ public class Waiter extends Agent
 				Motor.B.backward();
 			}
 			Thread.sleep(875);
-			//Thread.sleep(420);
+			// Thread.sleep(420);
 		} catch (InterruptedException e)
 		{
 		}
 	}
-	
+
 	private void openGrabber()
 	{
-		Motor.C.rotateTo(120);
+		Motor.A.stop();
+		Motor.B.stop();
+		Motor.C.rotateTo(105);
+		Motor.C.stop(true);
 	}
-	
+
 	private void closeGrabber()
 	{
+		Motor.A.stop();
+		Motor.B.stop();
 		Motor.C.rotateTo(0);
+		Motor.C.stop(true);
 	}
 }
