@@ -22,6 +22,7 @@ public class Waiter extends Agent
 	private int currentCustomer;
 
 	private boolean turn = false;
+	private boolean grabbing = true;
 
 	private final int[] custColor = { 1, 2, 3 };
 	private final int cookColor = 4;
@@ -36,7 +37,7 @@ public class Waiter extends Agent
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN",
 				"OPNEMEN_BESTELLING"));
 
-		this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
+		this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 2"));
 
 		init();
 	}
@@ -48,6 +49,7 @@ public class Waiter extends Agent
 		customerFound = false;
 		currentCustomer = -1;
 		turn = false;
+		grabbing = false;
 	}
 
 	@Override
@@ -174,6 +176,36 @@ public class Waiter extends Agent
 
 	private void rijNaarKlant()
 	{
+		if(turn)
+		{
+			forward();
+			turnNineTeen(richting == 2);
+			forward();
+			turn  = false;
+		}
+
+		Motor.A.setSpeed(0);
+		Motor.B.setSpeed(0);
+		
+		if(onColor(currentCustomer))
+			Motor.B.setSpeed(200);
+		else if(onColor(fieldColor))
+			Motor.A.setSpeed(200);
+		
+		if(onColor(pathOuter))
+		{
+			Motor.A.stop();
+			Motor.B.stop();
+		}
+		else
+		{
+			Motor.A.forward();
+			Motor.B.forward();
+		}
+		
+		
+		
+		/*
 		Motor.A.setSpeed(150);
 		Motor.B.setSpeed(150);
 
@@ -188,17 +220,16 @@ public class Waiter extends Agent
 				Motor.A.backward();
 				Motor.B.forward();
 			}
-			if(onColor(fieldColor))
+			if (onColor(fieldColor))
 				turn = false;
 		} else if (richting == 1)
 		{
-			if(onColor(currentCustomer))
+			if (onColor(currentCustomer))
 			{
 				Motor.A.setSpeed(200);
 				Motor.A.forward();
 				Motor.B.suspendRegulation();
-			}
-			else if(onColor(fieldColor))
+			} else if (onColor(fieldColor))
 			{
 				Motor.A.suspendRegulation();
 				Motor.B.setSpeed(200);
@@ -206,24 +237,72 @@ public class Waiter extends Agent
 			}
 		} else if (richting == 2)
 		{
-			if(onColor(currentCustomer))
+			if (onColor(currentCustomer))
 			{
 				Motor.A.suspendRegulation();
 				Motor.B.setSpeed(200);
 				Motor.B.forward();
-			}
-			else if(onColor(fieldColor))
+			} else if (onColor(fieldColor))
 			{
 				Motor.A.setSpeed(200);
 				Motor.A.forward();
 				Motor.B.suspendRegulation();
 			}
 		}
-		
-		if(onColor(pathOuter))
+
+		if (onColor(pathOuter))
 		{
 			Motor.A.suspendRegulation();
 			Motor.B.suspendRegulation();
+		}*/
+	}
+
+	private void forward()
+	{
+		forward(800);
+	}
+
+	private void forward(int ms)
+	{
+		Motor.A.setSpeed(160);
+		Motor.B.setSpeed(160);
+		Motor.A.forward();
+		Motor.B.forward();
+		try
+		{
+			Thread.sleep(ms);
+			Motor.A.stop();
+			Motor.B.stop();
+			Thread.sleep(50);
+		} catch (InterruptedException e)
+		{
+		}
+	}
+
+	private void turnNineTeen(boolean left)
+	{
+		try
+		{
+			Motor.A.stop();
+			Motor.B.stop();
+			Thread.sleep(50);
+			
+			Motor.A.setSpeed(200);
+			Motor.B.setSpeed(200);
+			if (left)
+			{
+
+				Motor.A.backward();
+				Motor.B.forward();
+			} else
+			{
+				Motor.A.forward();
+				Motor.B.backward();
+			}
+			Thread.sleep(875);
+			//Thread.sleep(420);
+		} catch (InterruptedException e)
+		{
 		}
 	}
 }
