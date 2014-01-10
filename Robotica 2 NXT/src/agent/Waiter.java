@@ -9,6 +9,7 @@ import robotica.Agent;
 import robotica.CoupledState;
 import robotica.SimState;
 import robotica.State;
+import standard.ColorHistory;
 
 public class Waiter extends Agent
 {
@@ -28,17 +29,18 @@ public class Waiter extends Agent
 	private final int cookColor = 4;
 	private final int fieldColor = 6;
 	private final int pathInner = 7, pathOuter = 0;
-
-	ColorHTSensor color = new ColorHTSensor(SensorPort.S1);
+	
+	ColorHistory color = new ColorHistory(SensorPort.S1);
 
 	public Waiter()
 	{
 		super("Waiter", new SimState("IDLE"));
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN",
 				"OPNEMEN_BESTELLING"));
-
 		this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 2"));
-
+		
+		color.start();
+		
 		init();
 	}
 
@@ -50,6 +52,12 @@ public class Waiter extends Agent
 		currentCustomer = -1;
 		turn = false;
 		grabbing = false;
+
+		Motor.C.setSpeed(100);
+		Motor.C.rotateTo(-360);
+		Motor.C.resetTachoCount();
+		
+		openGrabber();
 	}
 
 	@Override
@@ -73,6 +81,11 @@ public class Waiter extends Agent
 		notifyObservers();
 	}
 
+	private boolean onColorSafe(int num)
+	{
+		return true;
+	}
+	
 	private boolean onColor(int num)
 	{
 		return color.getColorID() == num;
@@ -183,25 +196,36 @@ public class Waiter extends Agent
 			forward();
 			turn  = false;
 		}
-
-		Motor.A.setSpeed(0);
-		Motor.B.setSpeed(0);
 		
 		if(onColor(currentCustomer))
+		{
+			Motor.A.setSpeed(50);
 			Motor.B.setSpeed(200);
+		}
 		else if(onColor(fieldColor))
-			Motor.A.setSpeed(200);
+		{
+			Motor.A.setSpeed(220);
+			Motor.B.setSpeed(20);
+		}
+		
+		Motor.A.forward();
+		Motor.B.forward();
 		
 		if(onColor(pathOuter))
 		{
+			closeGrabber();
 			Motor.A.stop();
 			Motor.B.stop();
+			try
+			{
+				Thread.sleep(4000);
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		else
-		{
-			Motor.A.forward();
-			Motor.B.forward();
-		}
+		
 		
 		
 		
@@ -304,5 +328,15 @@ public class Waiter extends Agent
 		} catch (InterruptedException e)
 		{
 		}
+	}
+	
+	private void openGrabber()
+	{
+		Motor.C.rotateTo(120);
+	}
+	
+	private void closeGrabber()
+	{
+		Motor.C.rotateTo(0);
 	}
 }
