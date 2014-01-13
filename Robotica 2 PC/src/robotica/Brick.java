@@ -64,9 +64,24 @@ public class Brick implements AgentObserver
 				s = left(s);
 				String stateName = first(s);
 				s = left(s);
+				
+				String bool = first(s);
+				s = left(s);
+				
+				SimState state;
+				
+				if(bool.equals("T"))
+				{
+					String target = first(s);
+					s = left(s);
+					
+					state = new SimState(stateName, target);
+				}
+				else
+					state = new SimState(stateName);
 
 				Agent age = getAgentWithId(agentID);
-				age.setState(new SimState(stateName));
+				age.setState(state);
 				age.setChanged();
 				age.notifyObservers();
 
@@ -84,6 +99,16 @@ public class Brick implements AgentObserver
 				System.out.println("agent with id " + Aid
 						+ " name changed into " + getAgentWithId(Aid).name());
 
+				break;
+				
+			case "TASKDONE":
+				String task = first(s);
+				s= left(s);
+				String target = first(s);
+				s = left(s);
+				
+				taskDone(new CompletedTask(task,target));
+				
 				break;
 			case "ADDCSTATE":
 				int agID = Integer.parseInt(first(s));
@@ -144,10 +169,31 @@ public class Brick implements AgentObserver
 
 		return null;
 	}
+	
+	public void taskDone(CompletedTask task)
+	{
+		for(int i = 0; i < sim.simulationModel().amountAgents(); i++)
+		{
+			Agent a = sim.simulationModel().getAgentAt(i);
+			if(a.name().equals(task.getTarget()))
+			{
+				a.addCompletedTask(task);
+				a.setChanged();
+				a.notifyObservers();
+			}
+		}
+	}
 
 	@Override
 	public void update(Agent a)
 	{
+		while(a.hasCompletedTask())
+		{
+			CompletedTask task = a.removeCompletedTask();
+			nxtCon.sendData("TASKDONE$"+a.getID()+"$"+task.getTask()+"$");
+		}
+		
+		
 		for (int i = 0; i < sim.simulationModel().amountAgents(); i++)
 		{
 			Agent b = sim.simulationModel().getAgentAt(i);

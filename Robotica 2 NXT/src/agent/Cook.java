@@ -17,7 +17,7 @@ public class Cook extends Agent
 
 	public Cook()
 	{
-		super("Cook", new SimState("RECYCLEVOEDSEL"));
+		super("KOK", new SimState("IDLE"));
 		init();
 		touch = new TouchSens(SensorPort.S1);
 		count = 0;
@@ -46,8 +46,6 @@ public class Cook extends Agent
 			Motor.A.rotateTo(0);
 			Motor.B.rotateTo(0);
 			Motor.C.rotateTo(0);
-			this.setState(new SimState("GRAB"));
-			setChanged();
 			break;
 
 		case "MAAKVOEDSEL":
@@ -177,5 +175,19 @@ public class Cook extends Agent
 		Motor.B.rotateTo(0);
 		Motor.A.rotateTo(0);
 		return true;
+	}
+
+	public void processCompletedTask(String task)
+	{
+		switch (task)
+		{
+		case "BESTELLING_AFGELEVERD":
+			if(this.currentState().name().equals("IDLE"))
+			{
+				this.setState(new SimState("MAAKVOEDSEL"));
+				this.setChanged();
+			}
+			break;
+		}
 	}
 }

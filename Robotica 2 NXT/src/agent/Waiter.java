@@ -4,8 +4,8 @@ import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
-import lejos.nxt.addon.ColorHTSensor;
 import robotica.Agent;
+import robotica.CompletedTask;
 import robotica.CoupledState;
 import robotica.SimState;
 import robotica.State;
@@ -39,7 +39,10 @@ public class Waiter extends Agent
 		super("Waiter", new SimState("IDLE"));
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN",
 				"OPNEMEN_BESTELLING"));
+		
+		/*
 		this.setState(new SimState("BRENG_VOEDSEL_NAAR_KLANT", "KLANT 1"));
+		this.setChanged();*/
 
 		color.start();
 
@@ -68,7 +71,16 @@ public class Waiter extends Agent
 	{
 		first = -1;
 		richting = -1;
-		currentStep = 0;
+		currentCustomer = -1;
+		currentStep = 0;		
+
+		turn = false;
+		moveBack = false;
+		hasBall = false;
+		
+		Motor.A.suspendRegulation();
+		Motor.B.suspendRegulation();
+		Motor.C.suspendRegulation();
 	}
 
 	@Override
@@ -76,12 +88,13 @@ public class Waiter extends Agent
 	{
 		State state = this.currentState();
 
-		if (richting == -1)
+		if (richting == -1 && !state.name().equals("IDLE"))
 			checkRichting();
 
 		switch (state.name())
 		{
 		case "IDLE":
+			reset();
 			break;
 		case "OPNEMEN_BESTELLING":
 			if (currentStep == 0)
@@ -110,6 +123,17 @@ public class Waiter extends Agent
 				hasBall = false;
 				moveBack = true;
 				currentStep++;
+				
+				this.addCompletedTask(new CompletedTask("KOK", "BESTELLING_AFGELEVERD"));
+			}
+			else if (currentStep == 8)
+			{
+				rijNaarBaan(false);
+			}
+			else if(currentStep == 9)
+			{
+				this.setState(new SimState("IDLE"));
+				this.setChanged();
 			}
 			break;
 
@@ -147,9 +171,8 @@ public class Waiter extends Agent
 			}
 			else if (currentStep == 9)
 			{
-				this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
-				currentStep = 0;
-				System.out.println("yay");
+				this.setState(new SimState("IDLE"));
+				this.setChanged();
 			}
 
 			break;

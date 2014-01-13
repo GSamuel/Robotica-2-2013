@@ -93,7 +93,17 @@ public class Customer extends Agent {
 		motor.setSpeed(720);
 		motor.rotateTo(270);
 	}
+	
+	public  void processCompletedTask(String task)
+	{
+		switch(task)
+		{
+			
+		}
+	}
 }
+
+
 
 /*
  * 5 states:

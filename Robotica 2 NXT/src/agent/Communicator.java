@@ -5,6 +5,7 @@ import java.util.Vector;
 import loop.Loop;
 import robotica.Agent;
 import robotica.AgentObserver;
+import robotica.CompletedTask;
 import robotica.CoupledState;
 import standard.BrickConnection;
 import connection.ConnectionManager;
@@ -49,18 +50,42 @@ public class Communicator extends Loop implements AgentObserver,
 		} else if (a.hasID())
 			createMessages(a);
 	}
-	
+
 	private void createMessages(Agent a)
 	{
-		messages.addElement("SETSTATE$" + a.getID() + "$"
-				+ a.currentState().name() + "$");
+
+		String state = "SETSTATE$" + a.getID() + "$" + a.currentState().name() + "$";
 		
-		for(int i = 0; i < a.coupledStateSize(); i++)
+		if(a.currentState().hasTarget())
+		{
+			state += "T$" +a.currentState().target()+"$";
+		}
+		else
+		{
+			state += "F$";
+		}
+		
+		messages.addElement(state.toString());
+		
+		
+		while(a.hasCompletedTask())
+		{
+			CompletedTask task = a.removeCompletedTask();
+			String mes = "TASKDONE$"+task.getTask()+"$"+task.getTarget()+"$";
+			
+			messages.addElement(mes);
+		}
+		
+		
+
+		for (int i = 0; i < a.coupledStateSize(); i++)
 		{
 			CoupledState cs = a.getCoupledState(i);
-			if(cs.getOwnState().name().equals(a.currentState().name()))
+			if (cs.getOwnState().name().equals(a.currentState().name()))
 			{
-				messages.addElement("ADDCSTATE$" + a.getID()+"$"+ cs.getOwnState().name()+"$"+cs.getTargetState().name() + "$");
+				messages.addElement("ADDCSTATE$" + a.getID() + "$"
+						+ cs.getOwnState().name() + "$"
+						+ cs.getTargetState().name() + "$");
 			}
 		}
 	}
@@ -95,7 +120,7 @@ public class Communicator extends Loop implements AgentObserver,
 	public void loop()
 	{
 		sendMessagesToServer();
-		if(!conMan.getBrickConnection().isEmpty())
+		if (!conMan.getBrickConnection().isEmpty())
 			update();
 	}
 }

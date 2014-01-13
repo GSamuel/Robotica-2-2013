@@ -77,6 +77,24 @@ public class AgentCollection
 
 			}
 			break;
+		case "TASKDONE":
+			int id2 = Integer.parseInt(first(data));
+			data = left(data);
+			String task = first(data);
+			data = left(data);
+			
+
+			for (int i = 0; i < agents.size(); i++)
+			{
+				Agent a = agents.elementAt(i);
+				if(a.getID() == id2)
+				{
+					a.processCompletedTask(task);
+				}
+			}
+			
+			
+			break;
 		}
 	}
 
