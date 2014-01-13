@@ -4,7 +4,7 @@ public class SimAgent extends Agent
 {
 	public SimAgent()
 	{
-		super("SimName", new NoState());
+		super("Unknown", new NoState());
 	}
 
 	@Override

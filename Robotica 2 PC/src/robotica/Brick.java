@@ -175,7 +175,9 @@ public class Brick implements AgentObserver
 		for(int i = 0; i < sim.simulationModel().amountAgents(); i++)
 		{
 			Agent a = sim.simulationModel().getAgentAt(i);
-			if(a.name().equals(task.getTarget()))
+
+			System.out.println(a.name()+"-- task --"+ task.getTarget());
+			if(a.name().equalsIgnoreCase(task.getTarget()))
 			{
 				a.addCompletedTask(task);
 				a.setChanged();
@@ -189,6 +191,7 @@ public class Brick implements AgentObserver
 	{
 		while(a.hasCompletedTask())
 		{
+			System.out.println(a.name()+"wants to send task");
 			CompletedTask task = a.removeCompletedTask();
 			nxtCon.sendData("TASKDONE$"+a.getID()+"$"+task.getTask()+"$");
 		}

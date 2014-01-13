@@ -36,6 +36,7 @@ public class MainCook
 		conMan.getBrickConnection().registerObserver(com);
 		
 		com.start();
+		col.forceChanged();
 		
 		/*
 		ConnectionLoop loop = new ConnectionLoop(10);

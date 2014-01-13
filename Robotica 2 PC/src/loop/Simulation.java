@@ -30,7 +30,7 @@ public class Simulation extends Loop
 	private void init()
 	{
 		bricks = new ArrayList<Brick>();
-		conMan = ConnectionManager.getInstance().start();
+		conMan = ConnectionManager.getInstance();
 	}
 
 	@Override

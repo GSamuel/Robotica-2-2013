@@ -1,7 +1,6 @@
 package robotica;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 
 public abstract class Agent
@@ -13,7 +12,7 @@ public abstract class Agent
 	private ArrayList<State> states;
 	private ArrayList<CoupledState> cStates;
 	private ArrayList<AgentObserver> observers;
-	private LinkedList<CompletedTask> completedTasks;
+	private ArrayList<CompletedTask> completedTasks;
 	private boolean changed = false;
 	private boolean sendAll = false;
 
@@ -22,7 +21,7 @@ public abstract class Agent
 		states = new ArrayList<State>();
 		observers = new ArrayList<AgentObserver>();
 		cStates = new ArrayList<CoupledState>();
-		completedTasks = new LinkedList<CompletedTask>();
+		completedTasks = new ArrayList<CompletedTask>();
 		setName(name);
 		currentState = state;
 		sendAll = true;
@@ -54,6 +53,7 @@ public abstract class Agent
 	public void addCompletedTask(CompletedTask task)
 	{
 		completedTasks.add(task);
+		System.out.println(completedTasks.size());
 	}
 	
 	public boolean hasCompletedTask()
@@ -63,8 +63,7 @@ public abstract class Agent
 	
 	public CompletedTask removeCompletedTask()
 	{
-		
-		return completedTasks.removeFirst();
+		return completedTasks.remove(0);
 	}
 
 	public void notifyObservers()

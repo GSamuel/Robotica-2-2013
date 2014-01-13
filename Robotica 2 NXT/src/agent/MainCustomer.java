@@ -21,14 +21,14 @@ public class MainCustomer
 		col.addAgent(cus);
 		com.observe(cus);
 		
-		/*
+		
 		cus= new Customer (Motor.B, "Klant 2");
 		col.addAgent(cus);
 		com.observe(cus);
 		
 		cus= new Customer (Motor.C, "Klant 3");
 		col.addAgent(cus);
-		com.observe(cus);*/
+		com.observe(cus);
 
 		AgentLoop loop = new AgentLoop(10, col);
 		loop.start();
@@ -47,6 +47,8 @@ public class MainCustomer
 		conMan.getBrickConnection().registerObserver(com);
 		
 		com.start();
+		
+		col.forceChanged();
 		
 	}
 }

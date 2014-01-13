@@ -6,7 +6,8 @@ import lejos.nxt.NXTRegulatedMotor;
 import robotica.Agent;
 import robotica.SimState;
 
-public class Customer extends Agent {
+public class Customer extends Agent
+{
 	private String name;
 	private boolean init;
 	private long starttime;
@@ -19,7 +20,8 @@ public class Customer extends Agent {
 	// gekoppeld kan worden. Yay dynamischheid
 	private NXTRegulatedMotor motor;
 
-	public Customer(NXTRegulatedMotor motor, String name) {
+	public Customer(NXTRegulatedMotor motor, String name)
+	{
 		super(name, new SimState("IDLE"));
 		this.wachttijd = 10;
 		this.behavior = new CustomerBehavior(wachttijd);
@@ -27,19 +29,18 @@ public class Customer extends Agent {
 		starttime = System.currentTimeMillis();
 		currenttime = System.currentTimeMillis();
 		stopwatch = 0;
-		// this.setState(new SimState("NEUTRAAL"));
-		// setChanged();
 
 		this.motor = motor;
 		motor.resetTachoCount();
 	}
 
 	@Override
-	public void update() {
+	public void update()
+	{
 		currenttime = System.currentTimeMillis();
 		stopwatch = currenttime - starttime;
-		// System.out.println(stopwatch);
-		switch (currentState().name()) {
+		switch (currentState().name())
+		{
 		case "IDLE":
 			idle();
 			break;
@@ -59,7 +60,8 @@ public class Customer extends Agent {
 		notifyObservers();
 	}
 
-	private void idle() {
+	private void idle()
+	{
 		System.out.println("IDLE");
 		motor.setSpeed(720);
 		motor.rotateTo(0);
@@ -68,24 +70,27 @@ public class Customer extends Agent {
 		setChanged();
 	}
 
-	private void wBestellen() {
-		System.out.println("WBESTELLEN");
+	private void wBestellen()
+	{
 		motor.setSpeed(720);
 		motor.rotateTo(90);
 	}
 
-	private void wEten() {
+	private void wEten()
+	{
 		motor.setSpeed(720);
 		motor.rotateTo(180);
 	}
 
-	private void eten() {
+	private void eten()
+	{
 		motor.setSpeed(300);
 		motor.forward();
 		wBetalen();
 	}
 
-	private void wBetalen() {
+	private void wBetalen()
+	{
 		motor.setSpeed(720);
 		int lol = motor.getTachoCount() / 360;
 		motor.rotateTo(lol * 360);
@@ -93,17 +98,22 @@ public class Customer extends Agent {
 		motor.setSpeed(720);
 		motor.rotateTo(270);
 	}
-	
-	public  void processCompletedTask(String task)
+
+	public void processCompletedTask(String task)
 	{
-		switch(task)
+		System.out.println(task);
+		switch (task)
 		{
-			
+		case "BESTELLING_OPGENOMEN":
+			if (this.currentState().name().equals("WBESTELLEN"))
+			{
+				this.setState(new SimState("WETEN"));
+				this.setChanged();
+			}
+			break;
 		}
 	}
 }
-
-
 
 /*
  * 5 states:

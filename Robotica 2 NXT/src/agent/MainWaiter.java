@@ -36,5 +36,6 @@ public class MainWaiter
 		conMan.getBrickConnection().registerObserver(com);
 		
 		com.start();
+		col.forceChanged();
 	}
 }

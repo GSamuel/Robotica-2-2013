@@ -12,7 +12,7 @@ public class Cook extends Agent
 	private int count;
 	private long start = System.currentTimeMillis();
 	private TouchSens touch;
-	private boolean ligtBal[] = { true, false, false, true };
+	private boolean ligtBal[] = { true, true, true, false };
 	private final int position[] = { 10000, 6000, -10000, 0 };
 
 	public Cook()
@@ -59,7 +59,7 @@ public class Cook extends Agent
 						verleg(i, true);
 			}
 
-			this.setState(new SimState("STOP"));
+			this.setState(new SimState("IDLE"));
 			setChanged();
 
 			break;
@@ -186,6 +186,8 @@ public class Cook extends Agent
 			{
 				this.setState(new SimState("MAAKVOEDSEL"));
 				this.setChanged();
+				
+				System.out.println("Maak voedsel");
 			}
 			break;
 		}

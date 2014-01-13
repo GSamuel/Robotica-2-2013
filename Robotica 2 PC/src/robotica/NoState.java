@@ -5,7 +5,7 @@ public class NoState extends State
 
 	public NoState()
 	{
-		super("");
+		super("State unknown");
 	}
 
 }

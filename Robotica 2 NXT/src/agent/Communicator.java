@@ -53,27 +53,22 @@ public class Communicator extends Loop implements AgentObserver,
 
 	private void createMessages(Agent a)
 	{
-
-		String state = "SETSTATE$" + a.getID() + "$" + a.currentState().name() + "$";
 		
 		if(a.currentState().hasTarget())
 		{
-			state += "T$" +a.currentState().target()+"$";
+			messages.addElement("SETSTATE$" + a.getID() + "$" + a.currentState().name() + "$T$" +a.currentState().target()+"$");
 		}
 		else
 		{
-			state += "F$";
+			messages.addElement("SETSTATE$" + a.getID() + "$" + a.currentState().name() + "$F$");
 		}
-		
-		messages.addElement(state.toString());
 		
 		
 		while(a.hasCompletedTask())
 		{
-			CompletedTask task = a.removeCompletedTask();
-			String mes = "TASKDONE$"+task.getTask()+"$"+task.getTarget()+"$";
-			
-			messages.addElement(mes);
+			CompletedTask task = a.removeCompletedTask();	
+			System.out.println(task.getTask()+" "+task.getTarget());
+			messages.addElement("TASKDONE$"+task.getTask()+"$"+task.getTarget()+"$");
 		}
 		
 		

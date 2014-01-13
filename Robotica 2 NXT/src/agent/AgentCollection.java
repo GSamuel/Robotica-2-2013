@@ -83,6 +83,8 @@ public class AgentCollection
 			String task = first(data);
 			data = left(data);
 			
+			System.out.println("received task message");
+			
 
 			for (int i = 0; i < agents.size(); i++)
 			{
@@ -96,6 +98,12 @@ public class AgentCollection
 			
 			break;
 		}
+	}
+	
+	public void forceChanged()
+	{
+		for(int i = 0; i < agents.size(); i++)
+			agents.elementAt(i).setChanged();
 	}
 
 	private String first(String s)

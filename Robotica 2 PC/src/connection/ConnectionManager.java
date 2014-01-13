@@ -19,8 +19,6 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 	{
 		// Exist only so you can't make an instance
 	}
-	
-	
 
 	public synchronized static ConnectionManager getInstance()
 	{
@@ -35,8 +33,7 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 		new Thread(this).start();
 		return this;
 	}
-	
-	
+
 	private void newBTComm()
 	{
 		try
@@ -48,6 +45,55 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 		}
 	}
 
+	public boolean connect(String name)
+	{
+		NXTInfo[] nxtInfo = null;
+		OutputStream dataOut = null;
+		InputStream dataIn = null;
+
+		newBTComm();
+
+		try
+		{
+			nxtInfo = BTComm.search(name);
+		} catch (NXTCommException e)
+		{
+			System.out.println("Cant search for devices");
+			return false;
+		}
+
+		for (int i = 0; i < nxtInfo.length; i++)
+		{
+			if (!model.contains(nxtInfo[i]))
+			{
+				try
+				{
+					BTComm.open(nxtInfo[i]);
+					dataOut = BTComm.getOutputStream();
+					dataIn = BTComm.getInputStream();
+					model.addConnection(new NXTConnection(nxtInfo[i], dataOut,
+							dataIn));
+
+					System.out.println("connected with: "
+							+ nxtInfo[i].deviceAddress + " name: "
+							+ nxtInfo[i].name);
+
+					newBTComm();
+				} catch (NXTCommException e)
+				{
+					System.out
+							.println("cant establish a connection with device: "
+									+ nxtInfo[i].deviceAddress
+									+ " name: "
+									+ nxtInfo[i].name);
+
+				}
+			}
+		}
+		return true;
+
+	}
+
 	@Override
 	public void run()
 	{
@@ -57,7 +103,7 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 		InputStream dataIn = null;
 
 		newBTComm();
-		
+
 		while (true)
 		{
 
@@ -72,7 +118,8 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 
 			for (int i = 0; i < nxtInfo.length; i++)
 			{
-				if (!model.contains(nxtInfo[i]) && nxtInfo[i].name.contains("Good") )
+				if (!model.contains(nxtInfo[i])
+						&& nxtInfo[i].name.contains("Good"))
 				{
 					try
 					{
@@ -99,8 +146,6 @@ public class ConnectionManager implements Runnable, Iterable<NXTConnection>
 			}
 		}
 	}
-
-
 
 	@Override
 	public Iterator<NXTConnection> iterator()

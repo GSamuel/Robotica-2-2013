@@ -107,8 +107,8 @@ public class Waiter extends Agent
 				rijNaarKlant();
 			else if (currentStep == 3)
 			{
-				closeGrabber();
-				hasBall = true;
+				this.addCompletedTask(new CompletedTask("BESTELLING_OPGENOMEN", currentState().target()));
+				this.setChanged();
 				moveBack = true;
 				currentStep++;
 			} else if (currentStep == 4)
@@ -124,7 +124,8 @@ public class Waiter extends Agent
 				moveBack = true;
 				currentStep++;
 				
-				this.addCompletedTask(new CompletedTask("KOK", "BESTELLING_AFGELEVERD"));
+				this.addCompletedTask(new CompletedTask("BESTELLING_AFGELEVERD", "KOK"));
+				this.setChanged();
 			}
 			else if (currentStep == 8)
 			{
@@ -132,6 +133,7 @@ public class Waiter extends Agent
 			}
 			else if(currentStep == 9)
 			{
+				reset();
 				this.setState(new SimState("IDLE"));
 				this.setChanged();
 			}
@@ -171,6 +173,7 @@ public class Waiter extends Agent
 			}
 			else if (currentStep == 9)
 			{
+				reset();
 				this.setState(new SimState("IDLE"));
 				this.setChanged();
 			}
