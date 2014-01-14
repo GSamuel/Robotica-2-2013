@@ -110,7 +110,7 @@ public class FancyPanel extends JPanel implements Observer, KeyListener,
 				conMan.connect("GoodCustomer");
 			else if (arg0.getActionCommand() == "conCook")
 				conMan.connect("GoodCook");
-			else if(arg0.getActionCommand() == "TEST")
+			else if(arg0.getActionCommand() == "RESET")
 			{
 				for (int i = 0; i < model.size(); i++)
 				{

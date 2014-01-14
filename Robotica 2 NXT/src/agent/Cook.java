@@ -13,7 +13,7 @@ public class Cook extends Agent
 	private long start = System.currentTimeMillis();
 	private TouchSens touch;
 	private boolean ligtBal[] = { true, true, true, false };
-	private final int position[] = { 10000, 6000, -10000, 0 };
+	private final int position[] = { 12000, 7000, -10000, 0 };
 
 	public Cook()
 	{
@@ -37,8 +37,8 @@ public class Cook extends Agent
 	public void reset()
 	{
 		ligtBal[0] = true;
-		ligtBal[1]=true;
-		ligtBal[2]=true;
+		ligtBal[1] = true;
+		ligtBal[2] = true;
 		ligtBal[3] = false;
 		this.setState(new SimState("IDLE"));
 		this.setChanged();
@@ -91,20 +91,29 @@ public class Cook extends Agent
 			this.setState(new SimState("STOP"));
 			setChanged();
 			break;
-		case "GRAB":
+		case "TEST":
 			Motor.A.setSpeed(720);
 			Motor.B.setSpeed(720);
 			Motor.C.setSpeed(720);
 
-			verleg(1, false);
+			Motor.C.rotateTo(position[0]);
+			if(grab())
+				put();
+			Motor.C.rotateTo(position[1]);
+			if(grab())
+				put();
+			Motor.C.rotateTo(position[2]);
+			if(grab())
+				put();
+			Motor.C.rotateTo(position[3]);
+			if(grab())
+				put();
+			
 
-			/*
-			 * Motor.A.rotateTo(-6700); Motor.B.rotateTo(100);
-			 * Motor.A.rotateTo(0); Motor.C.rotateTo(-7000);
-			 * Motor.A.rotateTo(-6700); Motor.B.rotateTo(0);
-			 * Motor.A.rotateTo(0); Motor.C.rotateTo(0);
-			 */
-			this.setState(new SimState("STOP"));
+			
+			
+			
+			this.setState(new SimState("IDLE"));
 			setChanged();
 			break;
 		case "STOP":
@@ -173,6 +182,7 @@ public class Cook extends Agent
 		if (touch.isPressed() == 0)
 		{
 			Motor.B.rotateTo(0);
+			Motor.A.rotate(0);
 			return false;
 		}
 		Motor.A.rotateTo(0);

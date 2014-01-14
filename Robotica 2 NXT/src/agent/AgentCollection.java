@@ -9,7 +9,7 @@ import robotica.SimState;
 public class AgentCollection
 {
 	private Vector<Agent> agents;
-	
+
 	private boolean reset = false;
 
 	public AgentCollection()
@@ -21,7 +21,7 @@ public class AgentCollection
 	{
 		agents.addElement(agent);
 	}
-	
+
 	public void reset()
 	{
 		reset = true;
@@ -29,13 +29,17 @@ public class AgentCollection
 
 	public void update()
 	{
-		for (int i = 0; i < agents.size(); i++)
+		if (reset)
 		{
-			if(reset)
+			for (int i = 0; i < agents.size(); i++)
 			{
 				agents.elementAt(i).reset();
-				reset = false;
 			}
+			reset = false;
+		}
+
+		for (int i = 0; i < agents.size(); i++)
+		{
 			agents.elementAt(i).update();
 		}
 	}
@@ -68,21 +72,23 @@ public class AgentCollection
 			for (int i = 0; i < agents.size(); i++)
 			{
 				Agent a = agents.elementAt(i);
-				if(a.getID() == id)
+				if (a.getID() == id)
 				{
 					String name = first(data);
 					data = left(data);
-					
+
 					String target = first(data);
 					data = left(data);
 
-					for(int j = 0; j < a.coupledStateSize(); j++)
+					for (int j = 0; j < a.coupledStateSize(); j++)
 					{
 						CoupledState sta = a.getCoupledState(j);
-						System.out.println(name+" "+ sta.getTargetState().name());
-						if(sta.getTargetState().name().equals(name))
+						System.out.println(name + " "
+								+ sta.getTargetState().name());
+						if (sta.getTargetState().name().equals(name))
 						{
-							a.setState(new SimState(sta.getNewState().name(), target));
+							a.setState(new SimState(sta.getNewState().name(),
+									target));
 							a.setChanged();
 							System.out.println(a.currentState().name());
 						}
@@ -96,27 +102,25 @@ public class AgentCollection
 			data = left(data);
 			String task = first(data);
 			data = left(data);
-			
+
 			System.out.println("received task message");
-			
 
 			for (int i = 0; i < agents.size(); i++)
 			{
 				Agent a = agents.elementAt(i);
-				if(a.getID() == id2)
+				if (a.getID() == id2)
 				{
 					a.processCompletedTask(task);
 				}
 			}
-			
-			
+
 			break;
 		}
 	}
-	
+
 	public void forceChanged()
 	{
-		for(int i = 0; i < agents.size(); i++)
+		for (int i = 0; i < agents.size(); i++)
 			agents.elementAt(i).setChanged();
 	}
 
