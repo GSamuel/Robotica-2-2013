@@ -39,10 +39,11 @@ public class Waiter extends Agent
 		super("Waiter", new SimState("IDLE"));
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN",
 				"OPNEMEN_BESTELLING"));
-		
+
 		/*
-		this.setState(new SimState("BRENG_VOEDSEL_NAAR_KLANT", "KLANT 1"));
-		this.setChanged();*/
+		 * this.setState(new SimState("BRENG_VOEDSEL_NAAR_KLANT", "KLANT 1"));
+		 * this.setChanged();
+		 */
 
 		color.start();
 
@@ -67,20 +68,26 @@ public class Waiter extends Agent
 		closeGrabber();
 	}
 
-	private void reset()
+	public void reset()
 	{
 		first = -1;
 		richting = -1;
 		currentCustomer = -1;
-		currentStep = 0;		
+		currentStep = 0;
 
 		turn = false;
 		moveBack = false;
 		hasBall = false;
-		
+
 		Motor.A.suspendRegulation();
 		Motor.B.suspendRegulation();
 		Motor.C.suspendRegulation();
+
+		if (!currentState().name().equals("IDLE"))
+		{
+			this.setState(new SimState("IDLE"));
+			this.setChanged();
+		}
 	}
 
 	@Override
@@ -107,7 +114,8 @@ public class Waiter extends Agent
 				rijNaarKlant();
 			else if (currentStep == 3)
 			{
-				this.addCompletedTask(new CompletedTask("BESTELLING_OPGENOMEN", currentState().target()));
+				this.addCompletedTask(new CompletedTask("BESTELLING_OPGENOMEN",
+						currentState().target()));
 				this.setChanged();
 				moveBack = true;
 				currentStep++;
@@ -123,19 +131,16 @@ public class Waiter extends Agent
 				hasBall = false;
 				moveBack = true;
 				currentStep++;
-				
-				this.addCompletedTask(new CompletedTask("BESTELLING_AFGELEVERD", "KOK"));
+
+				this.addCompletedTask(new CompletedTask(
+						"BESTELLING_AFGELEVERD", "KOK"));
 				this.setChanged();
-			}
-			else if (currentStep == 8)
+			} else if (currentStep == 8)
 			{
 				rijNaarBaan(false);
-			}
-			else if(currentStep == 9)
+			} else if (currentStep == 9)
 			{
 				reset();
-				this.setState(new SimState("IDLE"));
-				this.setChanged();
 			}
 			break;
 
@@ -166,16 +171,12 @@ public class Waiter extends Agent
 				hasBall = false;
 				moveBack = true;
 				currentStep++;
-			}
-			else if (currentStep == 8)
+			} else if (currentStep == 8)
 			{
 				rijNaarBaan(true);
-			}
-			else if (currentStep == 9)
+			} else if (currentStep == 9)
 			{
 				reset();
-				this.setState(new SimState("IDLE"));
-				this.setChanged();
 			}
 
 			break;

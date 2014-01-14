@@ -16,11 +16,18 @@ public class Customer extends Agent
 	public Customer(NXTRegulatedMotor motor, String name)
 	{
 		super(name, new SimState("IDLE"));
-		this.behavior = new CustomerBehavior(10);
+		this.behavior = new CustomerBehavior(4);
 		resetTime();
 
 		this.motor = motor;
 		motor.resetTachoCount();
+	}
+	
+	public void reset()
+	{
+		resetTime();
+		this.setState(new SimState("IDLE"));
+		this.setChanged();
 	}
 
 	@Override

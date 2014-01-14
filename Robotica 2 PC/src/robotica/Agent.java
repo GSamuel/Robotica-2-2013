@@ -200,6 +200,8 @@ public abstract class Agent
 
 	public abstract void update();
 	
+	public abstract void reset();
+	
 	public  void processCompletedTask(String task)
 	{
 		

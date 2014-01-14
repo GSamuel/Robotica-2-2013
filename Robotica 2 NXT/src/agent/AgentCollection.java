@@ -9,6 +9,8 @@ import robotica.SimState;
 public class AgentCollection
 {
 	private Vector<Agent> agents;
+	
+	private boolean reset = false;
 
 	public AgentCollection()
 	{
@@ -19,11 +21,23 @@ public class AgentCollection
 	{
 		agents.addElement(agent);
 	}
+	
+	public void reset()
+	{
+		reset = true;
+	}
 
 	public void update()
 	{
 		for (int i = 0; i < agents.size(); i++)
+		{
+			if(reset)
+			{
+				agents.elementAt(i).reset();
+				reset = false;
+			}
 			agents.elementAt(i).update();
+		}
 	}
 
 	public void processData(String data)

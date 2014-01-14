@@ -33,6 +33,16 @@ public class Cook extends Agent
 		Motor.B.resetTachoCount();
 		init = true;
 	}
+	
+	public void reset()
+	{
+		ligtBal[0] = true;
+		ligtBal[1]=true;
+		ligtBal[2]=true;
+		ligtBal[3] = false;
+		this.setState(new SimState("IDLE"));
+		this.setChanged();
+	}
 
 	@Override
 	public void update()

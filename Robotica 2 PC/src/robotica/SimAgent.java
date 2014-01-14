@@ -12,4 +12,11 @@ public class SimAgent extends Agent
 	{
 		
 	}
+
+	@Override
+	public void reset()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

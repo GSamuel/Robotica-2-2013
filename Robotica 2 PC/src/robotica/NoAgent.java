@@ -12,4 +12,11 @@ public class NoAgent extends Agent
 	{
 		
 	}
+
+	@Override
+	public void reset()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

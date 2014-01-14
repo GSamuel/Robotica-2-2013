@@ -205,4 +205,11 @@ public class WaiterOld extends Agent
 		}
 	}
 
+	@Override
+	public void reset()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

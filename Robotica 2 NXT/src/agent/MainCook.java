@@ -1,5 +1,6 @@
 package agent;
 import standard.AgentLoop;
+import standard.ResetProgram;
 import standard.StopProgram;
 import connection.ConnectionManager;
 
@@ -13,6 +14,10 @@ public class MainCook
 		conMan.start();
 		
 		AgentCollection col = new AgentCollection();
+
+		new ResetProgram(col).start();
+
+		new ResetProgram(col).start();
 		Communicator com = new Communicator(col);
 				
 		Cook cook = new Cook ();

@@ -19,4 +19,11 @@ public class TestAgent extends Agent
 		notifyObservers();
 	}
 
+	@Override
+	public void reset()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

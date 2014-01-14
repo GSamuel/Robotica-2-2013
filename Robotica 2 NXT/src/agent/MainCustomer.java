@@ -1,6 +1,7 @@
 package agent;
 import lejos.nxt.Motor;
 import standard.AgentLoop;
+import standard.ResetProgram;
 import standard.StopProgram;
 import connection.ConnectionManager;
 
@@ -14,6 +15,9 @@ public class MainCustomer
 		conMan.start();
 		
 		AgentCollection col = new AgentCollection();
+		
+		new ResetProgram(col).start();
+		
 		Communicator com = new Communicator(col);
 	
 		
