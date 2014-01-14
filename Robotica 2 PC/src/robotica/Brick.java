@@ -121,9 +121,6 @@ public class Brick implements AgentObserver
 				Agent agentje = getAgentWithId(agID);
 				agentje.addCoupledState(new CoupledState(ownState, targetState));
 
-				agentje.setChanged();
-				agentje.notifyObservers();
-
 				System.out.println("Coupled State added to "
 						+ getAgentWithId(agID).name() + ": " + ownState
 						+ " --- " + targetState);
@@ -207,9 +204,6 @@ public class Brick implements AgentObserver
 				{
 
 					nxtCon.sendData("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
-					System.out.println(a.getCoupledState(j).getTargetState()
-							.name()
-							+ " " + b.currentState().name());
 				}
 			}
 
@@ -220,9 +214,6 @@ public class Brick implements AgentObserver
 				{
 					b.setChanged();
 					b.notifyObservers();
-					System.out.println(b.getCoupledState(j).getTargetState()
-							.name()
-							+ " " + a.currentState().name());
 				}
 			}
 		}

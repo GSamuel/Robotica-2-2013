@@ -41,7 +41,6 @@ public class Communicator extends Loop implements AgentObserver,
 	@Override
 	public void update(Agent a)
 	{
-		a.currentState();
 		if (a.hasToSendAll() && a.hasID())
 		{
 			messages.addElement("SETNAME$" + a.getID() + "$" + a.name() + "$");

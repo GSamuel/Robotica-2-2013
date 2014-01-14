@@ -114,9 +114,7 @@ public class FancyPanel extends JPanel implements Observer, KeyListener,
 			{
 				for (int i = 0; i < model.size(); i++)
 				{
-					model.getAgentAt(i).addCompletedTask(new CompletedTask("BESTELLING_OPGENOMEN", "Klant 1"));
-					model.getAgentAt(i).setChanged();
-					model.getAgentAt(i).notifyObservers();
+					//model.
 				}
 			}
 		

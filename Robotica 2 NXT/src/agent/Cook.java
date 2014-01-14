@@ -3,6 +3,7 @@ package agent;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import robotica.Agent;
+import robotica.CompletedTask;
 import robotica.SimState;
 import standard.TouchSens;
 
@@ -12,8 +13,8 @@ public class Cook extends Agent
 	private int count;
 	private long start = System.currentTimeMillis();
 	private TouchSens touch;
-	private boolean ligtBal[] = { true, true, true, false };
-	private final int position[] = { 12000, 7000, -10000, 0 };
+	private boolean ligtBal[] = { true, false, true, false };
+	private final int position[] = { 11000, 7000, -10000, 0 };
 
 	public Cook()
 	{
@@ -33,7 +34,7 @@ public class Cook extends Agent
 		Motor.B.resetTachoCount();
 		init = true;
 	}
-	
+
 	public void reset()
 	{
 		ligtBal[0] = true;
@@ -69,6 +70,9 @@ public class Cook extends Agent
 						verleg(i, true);
 			}
 
+			if (ligtBal[3])
+				this.addCompletedTask(new CompletedTask("FOOD_READY", "OBER"));
+
 			this.setState(new SimState("IDLE"));
 			setChanged();
 
@@ -96,23 +100,15 @@ public class Cook extends Agent
 			Motor.B.setSpeed(720);
 			Motor.C.setSpeed(720);
 
-			Motor.C.rotateTo(position[0]);
-			if(grab())
-				put();
-			Motor.C.rotateTo(position[1]);
-			if(grab())
-				put();
-			Motor.C.rotateTo(position[2]);
-			if(grab())
-				put();
+			/*
+			 * Motor.C.rotateTo(position[0]); if(grab()) put();
+			 * Motor.C.rotateTo(position[1]); if(grab()) put();
+			 * Motor.C.rotateTo(position[2]); if(grab()) put();
+			 */
 			Motor.C.rotateTo(position[3]);
-			if(grab())
+			if (grab())
 				put();
-			
 
-			
-			
-			
 			this.setState(new SimState("IDLE"));
 			setChanged();
 			break;
@@ -177,7 +173,7 @@ public class Cook extends Agent
 
 	private boolean grab()
 	{
-		Motor.A.rotateTo(-6700);
+		Motor.A.rotateTo(-6900);
 		Motor.B.rotateTo(100);
 		if (touch.isPressed() == 0)
 		{
@@ -202,13 +198,22 @@ public class Cook extends Agent
 		switch (task)
 		{
 		case "BESTELLING_AFGELEVERD":
-			if(this.currentState().name().equals("IDLE"))
+			if (this.currentState().name().equals("IDLE"))
 			{
 				this.setState(new SimState("MAAKVOEDSEL"));
 				this.setChanged();
-				
+
 				System.out.println("Maak voedsel");
 			}
+			break;
+		case "BESTELLING_OPGEHAALD":
+			
+			if (ligtBal[3])
+				System.out.println("Bestelling opgehaald");
+			else
+				System.out.println("er was geen bestelling");
+			
+			ligtBal[3] = false;
 			break;
 		}
 	}

@@ -2,6 +2,7 @@ package agent;
 
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 import robotica.Agent;
@@ -26,6 +27,7 @@ public class Waiter extends Agent
 
 	private boolean turn = false;
 	private boolean moveBack = true;
+	private boolean cookHasFood = false;
 
 	private final int[] custColor = { 1, 2, 3 };
 	private final int cookColor = 4;
@@ -36,9 +38,14 @@ public class Waiter extends Agent
 
 	public Waiter()
 	{
-		super("Waiter", new SimState("IDLE"));
+		super("OBER", new SimState("IDLE"));
 		this.addCoupledState(new CoupledState("IDLE", "WBESTELLEN",
 				"OPNEMEN_BESTELLING"));
+		this.addCoupledState(new CoupledState("IDLE", "WETEN",
+				"BRENG_VOEDSEL_NAAR_KLANT"));
+		
+		//this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
+		//this.setChanged();
 
 		/*
 		 * this.setState(new SimState("BRENG_VOEDSEL_NAAR_KLANT", "KLANT 1"));
@@ -82,7 +89,7 @@ public class Waiter extends Agent
 		Motor.A.suspendRegulation();
 		Motor.B.suspendRegulation();
 		Motor.C.suspendRegulation();
-
+		
 		if (!currentState().name().equals("IDLE"))
 		{
 			this.setState(new SimState("IDLE"));
@@ -101,7 +108,7 @@ public class Waiter extends Agent
 		switch (state.name())
 		{
 		case "IDLE":
-			reset();
+			//reset();
 			break;
 		case "OPNEMEN_BESTELLING":
 			if (currentStep == 0)
@@ -156,6 +163,8 @@ public class Waiter extends Agent
 			else if (currentStep == 3)
 			{
 				closeGrabber();
+				cookHasFood = false;
+				this.addCompletedTask(new CompletedTask("BESTELLING_OPGEHAALD", "KOK"));
 				hasBall = true;
 				moveBack = true;
 				currentStep++;
@@ -485,8 +494,8 @@ public class Waiter extends Agent
 	{
 		Motor.A.stop();
 		Motor.B.stop();
-		Motor.C.rotateTo(105);
-		Motor.C.stop(true);
+		Motor.C.rotateTo(80);
+		Motor.C.stop();
 	}
 
 	private void closeGrabber()
@@ -494,6 +503,17 @@ public class Waiter extends Agent
 		Motor.A.stop();
 		Motor.B.stop();
 		Motor.C.rotateTo(0);
-		Motor.C.stop(true);
+		Motor.C.stop();
+	}
+	
+	public void processCompletedTask(String task)
+	{
+		System.out.println(task);
+		switch (task)
+		{
+		case "FOOD_READY":
+			cookHasFood = true;
+			break;
+		}
 	}
 }

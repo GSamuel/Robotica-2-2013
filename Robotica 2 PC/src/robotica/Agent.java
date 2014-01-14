@@ -53,7 +53,6 @@ public abstract class Agent
 	public void addCompletedTask(CompletedTask task)
 	{
 		completedTasks.add(task);
-		System.out.println(completedTasks.size());
 	}
 	
 	public boolean hasCompletedTask()
@@ -140,7 +139,10 @@ public abstract class Agent
 			}
 		}
 		if (!same)
+		{
 			cStates.add(cstate);
+			setSendAll();
+		}
 	}
 
 	public void removeCoupledState(CoupledState cstate)
