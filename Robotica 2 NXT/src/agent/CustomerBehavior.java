@@ -14,33 +14,16 @@ public class CustomerBehavior {
 		this.wachttijd = wachttijd;
 	}
 
-	public void idle() {
-		try {
-			int random = 1000 * randInt(2 * wachttijd, 4 * wachttijd);
-			Thread.sleep(random);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public int  idle() {
+			return 1000 * randInt(2 * wachttijd, 4 * wachttijd);
 	}
 
 
 
-	public void eten() {
-		try {
-			int random = 1000 * randInt(20 * wachttijd, 40 * wachttijd);
-			Thread.sleep(random);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public int eten() {
+			return 1000 * randInt(20 * wachttijd, 40 * wachttijd);
 	}
 
-
-	private void random() {
-		// TODO Auto-generated method stub
-
-	}
 
 	private int randInt(int min, int max) {
 

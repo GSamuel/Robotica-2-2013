@@ -1,34 +1,23 @@
 package agent;
 
-import java.util.Random;
-
 import lejos.nxt.NXTRegulatedMotor;
 import robotica.Agent;
 import robotica.SimState;
 
 public class Customer extends Agent
 {
-	private String name;
-	private boolean init;
-	private long starttime;
-	private long currenttime;
-	private long stopwatch;
+	private long previousTime;
+	private long currentTime;
+	private long timeToWait = 0;
 	private CustomerBehavior behavior;
-	private int wachttijd;
 
-	// Motor.A vervangen door motor, zodat een customer aan een specifieke motor
-	// gekoppeld kan worden. Yay dynamischheid
 	private NXTRegulatedMotor motor;
 
 	public Customer(NXTRegulatedMotor motor, String name)
 	{
 		super(name, new SimState("IDLE"));
-		this.wachttijd = 10;
-		this.behavior = new CustomerBehavior(wachttijd);
-		init = true;
-		starttime = System.currentTimeMillis();
-		currenttime = System.currentTimeMillis();
-		stopwatch = 0;
+		this.behavior = new CustomerBehavior(10);
+		resetTime();
 
 		this.motor = motor;
 		motor.resetTachoCount();
@@ -37,8 +26,6 @@ public class Customer extends Agent
 	@Override
 	public void update()
 	{
-		currenttime = System.currentTimeMillis();
-		stopwatch = currenttime - starttime;
 		switch (currentState().name())
 		{
 		case "IDLE":
@@ -59,27 +46,63 @@ public class Customer extends Agent
 		}
 		notifyObservers();
 	}
+	
+	private long timePast()
+	{
+		currentTime = System.currentTimeMillis();
+		long timePast = currentTime - previousTime;
+		previousTime = currentTime;
+		
+		return timePast;
+	}
+
+	private boolean resetTimeToWait()
+	{
+		if (timeToWait <= 0)
+		{
+			timeToWait = 0;
+			return true;
+		} else
+			return false;
+	}
+	
+	private void resetTime()
+	{
+		currentTime = System.currentTimeMillis();
+		previousTime = currentTime;
+		timeToWait = 0;
+	}
 
 	private void idle()
 	{
+		if(resetTimeToWait())
+			timeToWait = behavior.idle();
+		
+		timeToWait -= timePast();
+		
 		System.out.println("IDLE");
 		motor.setSpeed(720);
 		motor.rotateTo(0);
-		behavior.idle();
-		this.setState(new SimState("WBESTELLEN"));
-		setChanged();
+		if(timeToWait < 0)
+		{
+			this.setState(new SimState("WBESTELLEN"));
+			setChanged();
+			resetTime();
+		}
 	}
 
 	private void wBestellen()
 	{
 		motor.setSpeed(720);
 		motor.rotateTo(90);
+		resetTime();
 	}
 
 	private void wEten()
 	{
 		motor.setSpeed(720);
 		motor.rotateTo(180);
+		resetTime();
 	}
 
 	private void eten()
