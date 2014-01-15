@@ -31,7 +31,10 @@ public class ColorHistory implements Runnable
 	{
 		reset();
 		for (int i = 0; i < colorArray.length; i++)
+		{
+			if(i < colorID.length)
 			colorID[colorArray[i]]++;
+		}
 
 		int id = 0, amount = 0;
 

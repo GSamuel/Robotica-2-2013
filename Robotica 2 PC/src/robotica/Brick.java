@@ -2,6 +2,7 @@ package robotica;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import loop.Simulation;
 import connection.NXTConnection;
@@ -120,6 +121,8 @@ public class Brick implements AgentObserver
 
 				Agent agentje = getAgentWithId(agID);
 				agentje.addCoupledState(new CoupledState(ownState, targetState));
+				agentje.setChanged();
+				agentje.notifyObservers();
 
 				System.out.println("Coupled State added to "
 						+ getAgentWithId(agID).name() + ": " + ownState
@@ -197,14 +200,21 @@ public class Brick implements AgentObserver
 		for (int i = 0; i < sim.simulationModel().amountAgents(); i++)
 		{
 			Agent b = sim.simulationModel().getAgentAt(i);
+			ArrayList<String> updates = new ArrayList<String>();
 			for (int j = 0; j < a.coupledStateSize(); j++)
 			{
 				if (a.getCoupledState(j).getTargetState().name()
 						.equals(b.currentState().name()) && a.getCoupledState(j).getOwnState().name().equals(a.currentState().name()))
 				{
-
-					nxtCon.sendData("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
+					updates.add("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
+					//nxtCon.sendData("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
 				}
+			}
+			if(updates.size() > 0)
+			{
+				Random rand = new Random();
+				int num = rand.nextInt(updates.size());
+				nxtCon.sendData(updates.get(num));
 			}
 
 			for (int j = 0; j < b.coupledStateSize(); j++)

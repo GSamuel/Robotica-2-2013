@@ -140,6 +140,7 @@ public class Cook extends Agent
 		 * Motor.A.rotateTo(360); }
 		 */
 
+		updateState();
 		notifyObservers();
 	}
 

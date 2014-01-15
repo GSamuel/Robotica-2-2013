@@ -177,6 +177,7 @@ public class Waiter extends Agent
 			else if (currentStep == 7)
 			{
 				openGrabber();
+				this.addCompletedTask(new CompletedTask("ETEN_BEZORGD", this.currentState().target()));
 				hasBall = false;
 				moveBack = true;
 				currentStep++;
@@ -190,6 +191,8 @@ public class Waiter extends Agent
 
 			break;
 		}
+		
+		updateState();
 
 		notifyObservers();
 	}

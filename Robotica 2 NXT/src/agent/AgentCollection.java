@@ -85,7 +85,7 @@ public class AgentCollection
 						CoupledState sta = a.getCoupledState(j);
 						System.out.println(name + " "
 								+ sta.getTargetState().name());
-						if (sta.getTargetState().name().equals(name))
+						if (sta.getTargetState().name().equals(name) && a.currentState().name().equals(sta.getOwnState()))
 						{
 							a.setState(new SimState(sta.getNewState().name(),
 									target));

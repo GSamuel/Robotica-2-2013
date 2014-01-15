@@ -9,7 +9,8 @@ public abstract class Agent
 	private String name;
 	private boolean hasID = false, hasName = false;
 	private State currentState;
-	private ArrayList<State> states;
+	private State futureState;
+	//private ArrayList<State> states;
 	private ArrayList<CoupledState> cStates;
 	private ArrayList<AgentObserver> observers;
 	private ArrayList<CompletedTask> completedTasks;
@@ -18,7 +19,7 @@ public abstract class Agent
 
 	public Agent(String name, State state)
 	{
-		states = new ArrayList<State>();
+		//states = new ArrayList<State>();
 		observers = new ArrayList<AgentObserver>();
 		cStates = new ArrayList<CoupledState>();
 		completedTasks = new ArrayList<CompletedTask>();
@@ -104,10 +105,16 @@ public abstract class Agent
 
 	public Agent setState(State state)
 	{
-		currentState = state;
+		futureState = state;
+		//currentState = state;
 		return this;
 	}
-
+	
+	public void updateState()
+	{
+		currentState = futureState;
+	}
+/*
 	public void addState(State state)
 	{
 		states.add(state);
@@ -125,7 +132,7 @@ public abstract class Agent
 			if (name == state.name())
 				states.remove(state);
 		}
-	}
+	}*/
 
 	public void addCoupledState(CoupledState cstate)
 	{

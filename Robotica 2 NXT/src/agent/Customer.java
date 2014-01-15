@@ -51,6 +51,8 @@ public class Customer extends Agent
 			wBetalen();
 			break;
 		}
+		
+		updateState();
 		notifyObservers();
 	}
 	
@@ -116,7 +118,7 @@ public class Customer extends Agent
 	{
 		motor.setSpeed(300);
 		motor.forward();
-		wBetalen();
+		//wBetalen();
 	}
 
 	private void wBetalen()
@@ -138,6 +140,13 @@ public class Customer extends Agent
 			if (this.currentState().name().equals("WBESTELLEN"))
 			{
 				this.setState(new SimState("WETEN"));
+				this.setChanged();
+			}
+			break;
+		case "ETEN_BEZORGD":
+			if(this.currentState().name().equals("WETEN"))
+			{
+				this.setState(new SimState("ETEN"));
 				this.setChanged();
 			}
 			break;
