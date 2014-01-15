@@ -53,6 +53,5 @@ public class MainCustomer
 		com.start();
 		
 		col.forceChanged();
-		
 	}
 }

@@ -19,7 +19,9 @@ public class AgentCollection
 
 	public void addAgent(Agent agent)
 	{
+
 		agents.addElement(agent);
+
 	}
 
 	public void reset()
@@ -42,6 +44,7 @@ public class AgentCollection
 		{
 			agents.elementAt(i).update();
 		}
+
 	}
 
 	public void processData(String data)
@@ -85,7 +88,7 @@ public class AgentCollection
 						CoupledState sta = a.getCoupledState(j);
 						System.out.println(name + " "
 								+ sta.getTargetState().name());
-						if (sta.getTargetState().name().equals(name) && a.currentState().name().equals(sta.getOwnState()))
+						if (sta.getTargetState().name().equals(name))
 						{
 							a.setState(new SimState(sta.getNewState().name(),
 									target));
@@ -116,12 +119,14 @@ public class AgentCollection
 
 			break;
 		}
+
 	}
 
 	public void forceChanged()
 	{
 		for (int i = 0; i < agents.size(); i++)
 			agents.elementAt(i).setChanged();
+
 	}
 
 	private String first(String s)

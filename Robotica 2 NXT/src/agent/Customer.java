@@ -51,8 +51,7 @@ public class Customer extends Agent
 			wBetalen();
 			break;
 		}
-		
-		updateState();
+
 		notifyObservers();
 	}
 	

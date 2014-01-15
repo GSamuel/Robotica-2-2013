@@ -29,6 +29,7 @@ public class Communicator extends Loop implements AgentObserver,
 	{
 		a.registerObserver(this);
 		messages.addElement("NEW$");
+
 	}
 
 	public void start()
@@ -44,6 +45,7 @@ public class Communicator extends Loop implements AgentObserver,
 		if (a.hasToSendAll() && a.hasID())
 		{
 			messages.addElement("SETNAME$" + a.getID() + "$" + a.name() + "$");
+
 			createMessages(a);
 			a.allSended();
 		} else if (a.hasID())
@@ -52,25 +54,25 @@ public class Communicator extends Loop implements AgentObserver,
 
 	private void createMessages(Agent a)
 	{
-		
-		if(a.currentState().hasTarget())
+
+		if (a.currentState().hasTarget())
 		{
-			messages.addElement("SETSTATE$" + a.getID() + "$" + a.currentState().name() + "$T$" +a.currentState().target()+"$");
-		}
-		else
+			messages.addElement("SETSTATE$" + a.getID() + "$"
+					+ a.currentState().name() + "$T$"
+					+ a.currentState().target() + "$");
+		} else
 		{
-			messages.addElement("SETSTATE$" + a.getID() + "$" + a.currentState().name() + "$F$");
+			messages.addElement("SETSTATE$" + a.getID() + "$"
+					+ a.currentState().name() + "$F$");
 		}
-		
-		
-		while(a.hasCompletedTask())
+
+		while (a.hasCompletedTask())
 		{
-			CompletedTask task = a.removeCompletedTask();	
-			System.out.println(task.getTask()+" "+task.getTarget());
-			messages.addElement("TASKDONE$"+task.getTask()+"$"+task.getTarget()+"$");
+			CompletedTask task = a.removeCompletedTask();
+			System.out.println(task.getTask() + " " + task.getTarget());
+			messages.addElement("TASKDONE$" + task.getTask() + "$"
+					+ task.getTarget() + "$");
 		}
-		
-		
 
 		for (int i = 0; i < a.coupledStateSize(); i++)
 		{
@@ -82,6 +84,7 @@ public class Communicator extends Loop implements AgentObserver,
 						+ cs.getTargetState().name() + "$");
 			}
 		}
+
 	}
 
 	// New Input
@@ -101,11 +104,13 @@ public class Communicator extends Loop implements AgentObserver,
 		if (conMan.isConnected())
 		{
 			BrickConnection bc = conMan.getBrickConnection();
-			while (messages.size() > 0)
+
+			while (!messages.isEmpty())
 			{
 				bc.sendData(messages.elementAt(0));
 				messages.removeElementAt(0);
 			}
+
 		}
 
 	}

@@ -2,7 +2,6 @@ package agent;
 
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.Sound;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 import robotica.Agent;
@@ -188,12 +187,10 @@ public class Waiter extends Agent
 			{
 				reset();
 			}
-
 			break;
 		}
 		
-		updateState();
-
+		
 		notifyObservers();
 	}
 
@@ -222,7 +219,6 @@ public class Waiter extends Agent
 		{
 			if (safe)
 				bool = bool || color.getSafeColorID() == num[i];
-
 			else
 				bool = bool || color.getColorID() == num[i];
 		}
@@ -331,7 +327,6 @@ public class Waiter extends Agent
 	{
 		if (currentCustomer == -1)
 		{
-
 			if (currentState().target().equalsIgnoreCase("KLANT 1"))
 				currentCustomer = custColor[0];
 			if (currentState().target().equalsIgnoreCase("KLANT 2"))

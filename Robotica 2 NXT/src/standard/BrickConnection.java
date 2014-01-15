@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import connection.ConnectionObserver;
@@ -19,11 +18,11 @@ public class BrickConnection implements Runnable, NxtPcConnection
 	private Vector<String> receive;
 	private boolean working;
 	private boolean changed;
-	private ArrayList<ConnectionObserver> observers;
+	private Vector<ConnectionObserver> observers;
 
 	public BrickConnection(OutputStream out, InputStream in)
 	{
-		observers = new ArrayList<ConnectionObserver>();
+		observers = new Vector<ConnectionObserver>();
 		receive = new Vector<String>();
 		dataOut = new DataOutputStream(out);
 		dataIn = new DataInputStream(in);
@@ -69,14 +68,12 @@ public class BrickConnection implements Runnable, NxtPcConnection
 	
 	public void registerObserver(ConnectionObserver o)
 	{
-		observers.add(o);
+		observers.addElement(o);
 	}
 	
 	public void removeObserver(ConnectionObserver o)
 	{
-		int i = observers.indexOf(o);
-		if(i>=0)
-			observers.remove(i);
+		observers.removeElement(o);
 	}
 	
 	public void notifyObservers()
@@ -84,7 +81,7 @@ public class BrickConnection implements Runnable, NxtPcConnection
 		if(changed)
 		for(int i = 0; i < observers.size(); i++)
 		{
-			ConnectionObserver o = observers.get(i);
+			ConnectionObserver o = observers.elementAt(i);
 			o.update();
 			changed = false;
 		}
