@@ -207,14 +207,52 @@ public class Waiter extends Agent
 			}
 			break;
 		case "BRENG_REKENING":
-			System.out.println("Breng rekening naar"+currentState().target());
-			try
+			if(cookHasFood)
 			{
-				Thread.sleep(3000);
-			} catch (InterruptedException e)
-			{
+				this.setState(new SimState("IDLE"));
 			}
-			
+			if (currentStep == 0)
+				zoekKlant();
+			else if (currentStep == 1)
+			{
+				openGrabber();
+				currentStep++;
+			} else if (currentStep == 2)
+				rijNaarKlant();
+			else if (currentStep == 3)
+			{
+				closeGrabber();
+				this.addCompletedTask(new CompletedTask("BETALING_AFGEROND",
+						currentState().target()));
+				this.setChanged();
+				hasBall = true;
+				moveBack = true;
+				currentStep++;
+			} else if (currentStep == 4)
+				rijNaarBaan(true);
+			else if (currentStep == 5)
+				zoekKok();
+			else if (currentStep == 6)
+				rijNaarKok();
+			else if (currentStep == 7)
+			{
+				openGrabber();
+				hasBall = false;
+				moveBack = true;
+				currentStep++;
+
+				this.addCompletedTask(new CompletedTask(
+						"AFWAS_GEBRACHT", "KOK"));
+				this.setChanged();
+			} else if (currentStep == 8)
+			{
+				rijNaarBaan(false);
+			} else if (currentStep == 9)
+			{
+				reset();
+				this.setState(new SimState("IDLE"));
+				this.setChanged();
+			}
 			break;
 		}
 

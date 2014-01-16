@@ -177,6 +177,13 @@ public class Customer extends Agent
 				this.setChanged();
 			}
 			break;
+		case "BETALING_AFGEROND":
+			if (this.currentState().name().equals("WBETALEN"))
+			{
+				this.setState(new SimState("STOP"));
+				this.setChanged();
+			}
+			break;
 		}
 	}
 }
