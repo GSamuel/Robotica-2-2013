@@ -1,8 +1,8 @@
 package agent;
 
 import lejos.nxt.NXTRegulatedMotor;
-import robotica.Agent;
 import robotica.SimState;
+import standard.Agent;
 
 public class Customer extends Agent
 {
@@ -10,6 +10,7 @@ public class Customer extends Agent
 	private long currentTime;
 	private long timeToWait = 0;
 	private CustomerBehavior behavior;
+	private boolean rotating = false;
 
 	private NXTRegulatedMotor motor;
 
@@ -22,10 +23,11 @@ public class Customer extends Agent
 		this.motor = motor;
 		motor.resetTachoCount();
 	}
-	
+
 	public void reset()
 	{
 		resetTime();
+		resetRotation();
 		this.setState(new SimState("IDLE"));
 		this.setChanged();
 	}
@@ -52,15 +54,16 @@ public class Customer extends Agent
 			break;
 		}
 
+		this.updateState();
 		notifyObservers();
 	}
-	
+
 	private long timePast()
 	{
 		currentTime = System.currentTimeMillis();
 		long timePast = currentTime - previousTime;
 		previousTime = currentTime;
-		
+
 		return timePast;
 	}
 
@@ -73,7 +76,7 @@ public class Customer extends Agent
 		} else
 			return false;
 	}
-	
+
 	private void resetTime()
 	{
 		currentTime = System.currentTimeMillis();
@@ -83,15 +86,16 @@ public class Customer extends Agent
 
 	private void idle()
 	{
-		if(resetTimeToWait())
+		resetRotation();
+		if (resetTimeToWait())
 			timeToWait = behavior.idle();
-		
+
 		timeToWait -= timePast();
-		
+
 		System.out.println("IDLE");
 		motor.setSpeed(720);
 		motor.rotateTo(0);
-		if(timeToWait < 0)
+		if (timeToWait < 0)
 		{
 			this.setState(new SimState("WBESTELLEN"));
 			setChanged();
@@ -101,6 +105,7 @@ public class Customer extends Agent
 
 	private void wBestellen()
 	{
+		resetRotation();
 		motor.setSpeed(720);
 		motor.rotateTo(90);
 		resetTime();
@@ -108,26 +113,49 @@ public class Customer extends Agent
 
 	private void wEten()
 	{
+		resetRotation();
 		motor.setSpeed(720);
 		motor.rotateTo(180);
+
 		resetTime();
 	}
 
 	private void eten()
 	{
+		if (resetTimeToWait())
+			timeToWait = behavior.eten();
+
+		timeToWait -= timePast();
+
+		System.out.println("ETEN");
+
+		if (timeToWait < 0)
+		{
+			this.setState(new SimState("WBETALEN"));
+			setChanged();
+			resetTime();
+		}
+		rotating = true;
 		motor.setSpeed(300);
 		motor.forward();
-		//wBetalen();
 	}
 
 	private void wBetalen()
 	{
+		resetRotation();
 		motor.setSpeed(720);
-		int lol = motor.getTachoCount() / 360;
-		motor.rotateTo(lol * 360);
-		motor.resetTachoCount();
 		motor.setSpeed(720);
 		motor.rotateTo(270);
+	}
+
+	private void resetRotation()
+	{
+		if (rotating)
+		{
+			int lol = motor.getTachoCount() / 360;
+			motor.rotateTo(lol * 360);
+			motor.resetTachoCount();
+		}
 	}
 
 	public void processCompletedTask(String task)
@@ -143,7 +171,7 @@ public class Customer extends Agent
 			}
 			break;
 		case "ETEN_BEZORGD":
-			if(this.currentState().name().equals("WETEN"))
+			if (this.currentState().name().equals("WETEN"))
 			{
 				this.setState(new SimState("ETEN"));
 				this.setChanged();

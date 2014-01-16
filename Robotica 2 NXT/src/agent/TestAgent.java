@@ -1,6 +1,6 @@
 package agent;
 
-import robotica.Agent;
+import standard.Agent;
 import robotica.CoupledState;
 import robotica.SimState;
 

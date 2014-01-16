@@ -1,6 +1,6 @@
 package agent;
 
-import robotica.Agent;
+import standard.Agent;
 import standard.AgentLoop;
 import standard.StopProgram;
 import connection.ConnectionManager;

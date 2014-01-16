@@ -17,6 +17,7 @@ public class AgentLoop extends Loop
 	public void loop()
 	{
 		col.update();
+		col.processData();
 	}
 
 }

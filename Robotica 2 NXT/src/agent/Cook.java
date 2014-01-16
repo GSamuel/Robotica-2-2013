@@ -2,29 +2,23 @@ package agent;
 
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
-import robotica.Agent;
+import standard.Agent;
 import robotica.CompletedTask;
 import robotica.SimState;
 import standard.TouchSens;
 
 public class Cook extends Agent
 {
-	private boolean init = false;
-	private int count;
-	private long start = System.currentTimeMillis();
+	private int amountOfFood = 0;
 	private TouchSens touch;
-	private boolean ligtBal[] = { true, false, true, false };
-	private final int position[] = { 11000, 7000, -10000, 0 };
+	private boolean ligtBal[] = { true, true, true, false};
+	private final int position[] = { 11000, 6850, -9500, 0 };
 
 	public Cook()
 	{
 		super("KOK", new SimState("IDLE"));
 		init();
 		touch = new TouchSens(SensorPort.S1);
-		count = 0;
-		Motor.A.resetTachoCount();
-		Motor.B.resetTachoCount();
-		Motor.C.resetTachoCount();
 	}
 
 	private void init()
@@ -32,7 +26,9 @@ public class Cook extends Agent
 		Motor.B.setSpeed(720);
 		Motor.B.rotateTo(-360);
 		Motor.B.resetTachoCount();
-		init = true;
+		Motor.A.resetTachoCount();
+		Motor.C.resetTachoCount();
+		reset();
 	}
 
 	public void reset()
@@ -41,6 +37,7 @@ public class Cook extends Agent
 		ligtBal[1] = true;
 		ligtBal[2] = true;
 		ligtBal[3] = false;
+		amountOfFood = 0;
 		this.setState(new SimState("IDLE"));
 		this.setChanged();
 	}
@@ -56,18 +53,28 @@ public class Cook extends Agent
 			Motor.C.setSpeed(720);
 			Motor.A.rotateTo(0);
 			Motor.B.rotateTo(0);
-			Motor.C.rotateTo(0);
+			Motor.C.rotateTo(0);			
+			
+			if(amountOfFood > 0 && !ligtBal[3])
+			{
+				System.out.println("MAAKVOEDSEL");
+				this.setState(new SimState("MAAKVOEDSEL"));
+				this.setChanged();
+				amountOfFood --;
+			}
 			break;
 
 		case "MAAKVOEDSEL":
 			Motor.A.setSpeed(720);
-			Motor.B.setSpeed(720);
+			Motor.B.setSpeed(150);
 			Motor.C.setSpeed(720);
 			if (!ligtBal[3])
 			{
 				for (int i = 0; i < 3; i++)
 					if (ligtBal[i] && !ligtBal[3])
+					{
 						verleg(i, true);
+					}
 			}
 
 			if (ligtBal[3])
@@ -81,7 +88,7 @@ public class Cook extends Agent
 		case "RECYCLEVOEDSEL":
 
 			Motor.A.setSpeed(720);
-			Motor.B.setSpeed(720);
+			Motor.B.setSpeed(150);
 			Motor.C.setSpeed(720);
 			// System.out.println(ligtBal[0]+" "+ligtBal[1]+" "+ligtBal[2]+" "+ligtBal[3]);
 			if (ligtBal[3])
@@ -97,7 +104,7 @@ public class Cook extends Agent
 			break;
 		case "TEST":
 			Motor.A.setSpeed(720);
-			Motor.B.setSpeed(720);
+			Motor.B.setSpeed(150);
 			Motor.C.setSpeed(720);
 
 			/*
@@ -105,7 +112,7 @@ public class Cook extends Agent
 			 * Motor.C.rotateTo(position[1]); if(grab()) put();
 			 * Motor.C.rotateTo(position[2]); if(grab()) put();
 			 */
-			Motor.C.rotateTo(position[3]);
+			Motor.C.rotateTo(position[1]);
 			if (grab())
 				put();
 
@@ -131,6 +138,7 @@ public class Cook extends Agent
 
 		}
 
+		this.updateState();
 		notifyObservers();
 	}
 
@@ -164,7 +172,7 @@ public class Cook extends Agent
 
 	private boolean grab()
 	{
-		Motor.A.rotateTo(-6900);
+		Motor.A.rotateTo(-7200);
 		Motor.B.rotateTo(100);
 		if (touch.isPressed() == 0)
 		{
@@ -189,13 +197,8 @@ public class Cook extends Agent
 		switch (task)
 		{
 		case "BESTELLING_AFGELEVERD":
-			if (this.currentState().name().equals("IDLE"))
-			{
-				this.setState(new SimState("MAAKVOEDSEL"));
-				this.setChanged();
-
-				System.out.println("Maak voedsel");
-			}
+			System.out.println("Besetlling afgeleverd");
+			amountOfFood ++;
 			break;
 		case "BESTELLING_OPGEHAALD":
 			

@@ -3,10 +3,10 @@ package agent;
 import java.util.Vector;
 
 import loop.Loop;
-import robotica.Agent;
-import robotica.AgentObserver;
 import robotica.CompletedTask;
 import robotica.CoupledState;
+import standard.Agent;
+import standard.AgentObserver;
 import standard.BrickConnection;
 import connection.ConnectionManager;
 import connection.ConnectionObserver;
@@ -39,7 +39,6 @@ public class Communicator extends Loop implements AgentObserver,
 	}
 
 	// Agent state changed
-	@Override
 	public void update(Agent a)
 	{
 		if (a.hasToSendAll() && a.hasID())
@@ -84,6 +83,13 @@ public class Communicator extends Loop implements AgentObserver,
 						+ cs.getTargetState().name() + "$");
 			}
 		}
+		
+		if(a.requestNewState())
+		{
+			a.setRequestNewState(false);
+			messages.addElement("REQUEST$"+a.getID()+"$");
+		}
+			
 
 	}
 
@@ -95,7 +101,8 @@ public class Communicator extends Loop implements AgentObserver,
 		while (!bc.isEmpty())
 		{
 			String s = bc.receiveData();
-			col.processData(s);
+			//col.processData(s);
+			col.addData(s);
 		}
 	}
 

@@ -58,27 +58,25 @@ public class Brick implements AgentObserver
 				sim.simulationModel().addAgent(a);
 				nxtCon.sendData("NEW$".concat(String.valueOf(a.getID()))
 						.concat("$"));
-				System.out.println("New Agent Found");
 				break;
 			case "SETSTATE":
 				int agentID = Integer.parseInt(first(s));
 				s = left(s);
 				String stateName = first(s);
 				s = left(s);
-				
+
 				String bool = first(s);
 				s = left(s);
-				
+
 				SimState state;
-				
-				if(bool.equals("T"))
+
+				if (bool.equals("T"))
 				{
 					String target = first(s);
 					s = left(s);
-					
+
 					state = new SimState(stateName, target);
-				}
-				else
+				} else
 					state = new SimState(stateName);
 
 				Agent age = getAgentWithId(agentID);
@@ -97,19 +95,16 @@ public class Brick implements AgentObserver
 				s = left(s);
 				ag.setName(first(s));
 
-				System.out.println("agent with id " + Aid
-						+ " name changed into " + getAgentWithId(Aid).name());
-
 				break;
-				
+
 			case "TASKDONE":
 				String task = first(s);
-				s= left(s);
+				s = left(s);
 				String target = first(s);
 				s = left(s);
-				
-				taskDone(new CompletedTask(task,target));
-				
+
+				taskDone(new CompletedTask(task, target));
+
 				break;
 			case "ADDCSTATE":
 				int agID = Integer.parseInt(first(s));
@@ -127,6 +122,48 @@ public class Brick implements AgentObserver
 				System.out.println("Coupled State added to "
 						+ getAgentWithId(agID).name() + ": " + ownState
 						+ " --- " + targetState);
+
+				break;
+			case "REQUEST":
+				int agenID = Integer.parseInt(first(s));
+				s = left(s);
+
+				Agent agen = getAgentWithId(agenID);
+
+				ArrayList<String> messages = new ArrayList<String>();
+				System.out.println("Got Request");
+				
+				
+				for (int i = 0; i < agen.coupledStateSize(); i++)
+				{
+					CoupledState coup = agen.getCoupledState(i);
+					
+					for (int j = 0; j < sim.simulationModel().amountAgents(); j++)
+					{
+						Agent agent2 = sim.simulationModel().getAgentAt(j);
+						
+						//System.out.println(coup.getTargetState().name() +" == "+ agent2.currentState().name()+" && " + agen.currentState().name() +" == "+ coup.getOwnState().name());
+						
+						if (coup.getTargetState().name()
+								.equals(agent2.currentState().name())
+								&& agen.currentState().name().equals(coup
+										.getOwnState().name()))
+						{
+							messages.add("CSTATE$" + agen.getID() + "$"
+									+ agent2.currentState().name() + "$"
+									+ agent2.name() + "$");
+						}
+					}
+				}
+				System.out.println("request data amount: " + messages.size());
+
+				if (messages.size() > 0)
+				{
+
+					Random rand = new Random();
+					int num = rand.nextInt(messages.size());
+					nxtCon.sendData(messages.get(num));
+				}
 
 				break;
 			default:
@@ -169,15 +206,13 @@ public class Brick implements AgentObserver
 
 		return null;
 	}
-	
+
 	public void taskDone(CompletedTask task)
 	{
-		for(int i = 0; i < sim.simulationModel().amountAgents(); i++)
+		for (int i = 0; i < sim.simulationModel().amountAgents(); i++)
 		{
 			Agent a = sim.simulationModel().getAgentAt(i);
-
-			System.out.println(a.name()+"-- task --"+ task.getTarget());
-			if(a.name().equalsIgnoreCase(task.getTarget()))
+			if (a.name().equalsIgnoreCase(task.getTarget()))
 			{
 				a.addCompletedTask(task);
 				a.setChanged();
@@ -189,43 +224,32 @@ public class Brick implements AgentObserver
 	@Override
 	public void update(Agent a)
 	{
-		while(a.hasCompletedTask())
+		while (a.hasCompletedTask())
 		{
-			System.out.println(a.name()+"wants to send task");
 			CompletedTask task = a.removeCompletedTask();
-			nxtCon.sendData("TASKDONE$"+a.getID()+"$"+task.getTask()+"$");
+			nxtCon.sendData("TASKDONE$" + a.getID() + "$" + task.getTask()
+					+ "$");
 		}
-		
-		
-		for (int i = 0; i < sim.simulationModel().amountAgents(); i++)
-		{
-			Agent b = sim.simulationModel().getAgentAt(i);
-			ArrayList<String> updates = new ArrayList<String>();
-			for (int j = 0; j < a.coupledStateSize(); j++)
-			{
-				if (a.getCoupledState(j).getTargetState().name()
-						.equals(b.currentState().name()) && a.getCoupledState(j).getOwnState().name().equals(a.currentState().name()))
-				{
-					updates.add("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
-					//nxtCon.sendData("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$");
-				}
-			}
-			if(updates.size() > 0)
-			{
-				Random rand = new Random();
-				int num = rand.nextInt(updates.size());
-				nxtCon.sendData(updates.get(num));
-			}
+		/*
+		 * for (int i = 0; i < sim.simulationModel().amountAgents(); i++) {
+		 * Agent b = sim.simulationModel().getAgentAt(i); ArrayList<String>
+		 * updates = new ArrayList<String>(); for (int j = 0; j <
+		 * a.coupledStateSize(); j++) { if
+		 * (a.getCoupledState(j).getTargetState().name()
+		 * .equals(b.currentState().name()) &&
+		 * a.getCoupledState(j).getOwnState().name()
+		 * .equals(a.currentState().name())) { updates.add("CSTATE$" + a.getID()
+		 * + "$" + b.currentState().name() + "$" + b.name() + "$"); //
+		 * nxtCon.sendData
+		 * ("CSTATE$"+a.getID()+"$"+b.currentState().name()+"$"+b.name()+"$"); }
+		 * } if (updates.size() > 0) { Random rand = new Random(); int num =
+		 * rand.nextInt(updates.size()); nxtCon.sendData(updates.get(num)); }
+		 * 
+		 * for (int j = 0; j < b.coupledStateSize(); j++) { if
+		 * (b.getCoupledState(j).getTargetState().name()
+		 * .equals(a.currentState().name())) { b.setChanged();
+		 * b.notifyObservers(); } } }
+		 */
 
-			for (int j = 0; j < b.coupledStateSize(); j++)
-			{
-				if (b.getCoupledState(j).getTargetState().name()
-						.equals(a.currentState().name()))
-				{
-					b.setChanged();
-					b.notifyObservers();
-				}
-			}
-		}
 	}
 }

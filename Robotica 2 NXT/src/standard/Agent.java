@@ -1,32 +1,48 @@
-package robotica;
+package standard;
 
-import java.util.ArrayList;
+import java.util.Vector;
+
+import robotica.CompletedTask;
+import robotica.CoupledState;
+import robotica.State;
 
 public abstract class Agent
 {
 	private int id;
 	private String name;
 	private boolean hasID = false, hasName = false;
-	private State currentState;
+	private State currentState, futureState;
 	// private ArrayList<State> states;
-	private ArrayList<CoupledState> cStates;
-	private ArrayList<AgentObserver> observers;
-	private ArrayList<CompletedTask> completedTasks;
+	private Vector<CoupledState> cStates;
+	private Vector<AgentObserver> observers;
+	private Vector<CompletedTask> completedTasks;
 	private boolean changed = false;
 	private boolean sendAll = false;
+	private boolean hasFutureState = false;
+	private boolean requestNewState = false;
 
 	public Agent(String name, State state)
 	{
 		// states = new ArrayList<State>();
-		observers = new ArrayList<AgentObserver>();
-		cStates = new ArrayList<CoupledState>();
-		completedTasks = new ArrayList<CompletedTask>();
+		observers = new Vector<AgentObserver>();
+		cStates = new Vector<CoupledState>();
+		completedTasks = new Vector<CompletedTask>();
 		setName(name);
 		currentState = state;
 		sendAll = true;
 		setChanged();
 	}
 
+	public boolean requestNewState()
+	{
+		return requestNewState;
+	}
+	
+	public void setRequestNewState(boolean bool)
+	{
+		requestNewState = bool;
+	}
+	
 	public int coupledStateSize()
 	{
 		return cStates.size();
@@ -46,28 +62,25 @@ public abstract class Agent
 			{
 			}
 		}
-		return cStates.get(index);
+		return cStates.elementAt(index);
 
 	}
 
 	public void registerObserver(AgentObserver o)
 	{
-		observers.add(o);
+		observers.addElement(o);
+
 	}
 
 	public void removeObserver(AgentObserver o)
 	{
-
-		int i = observers.indexOf(o);
-		if (i >= 0)
-			observers.remove(i);
-
+		observers.removeElement(o);
 	}
 
 	public void addCompletedTask(CompletedTask task)
 	{
 
-		completedTasks.add(task);
+		completedTasks.addElement(task);
 
 	}
 
@@ -79,7 +92,10 @@ public abstract class Agent
 
 	public CompletedTask removeCompletedTask()
 	{
-		return completedTasks.remove(0);
+
+		CompletedTask task = completedTasks.elementAt(0);
+		completedTasks.removeElementAt(0);
+		return task;
 
 	}
 
@@ -89,7 +105,7 @@ public abstract class Agent
 		{
 			for (int i = 0; i < observers.size(); i++)
 			{
-				AgentObserver o = observers.get(i);
+				AgentObserver o = observers.elementAt(i);
 				o.update(this);
 			}
 			changed = false;
@@ -125,8 +141,25 @@ public abstract class Agent
 
 	public Agent setState(State state)
 	{
-		currentState = state;
+		futureState = state;
+		hasFutureState = true;
+		//currentState = state;
 		return this;
+	}
+	
+	public boolean hasFutureState()
+	{
+		return hasFutureState;
+	}
+	
+	public void updateState()
+	{
+		if(hasFutureState)
+		{
+			currentState = futureState;
+			hasFutureState = false;
+		}
+		
 	}
 
 	/*
@@ -143,7 +176,7 @@ public abstract class Agent
 		boolean same = false;
 		for (int i = 0; i < cStates.size(); i++)
 		{
-			if (cStates.get(i).isSame(cstate))
+			if (cStates.elementAt(i).isSame(cstate))
 			{
 				same = true;
 				break;
@@ -151,7 +184,7 @@ public abstract class Agent
 		}
 		if (!same)
 		{
-			cStates.add(cstate);
+			cStates.addElement(cstate);
 			setSendAll();
 		}
 
@@ -159,17 +192,18 @@ public abstract class Agent
 
 	public void removeCoupledState(CoupledState cstate)
 	{
-		cStates.remove(cstate);
+		cStates.removeElement(cstate);
 
 	}
 
 	public void removeCoupledState(String own, String target)
 	{
-		for (CoupledState cstate : cStates)
+		for(int i = 0; i < cStates.size(); i++)
 		{
+			CoupledState cstate = cStates.elementAt(i);
 			if (own == cstate.getOwnState().name()
 					&& target == cstate.getTargetState().name())
-				cStates.remove(cstate);
+				cStates.removeElement(cstate);
 		}
 
 	}

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import javax.sound.midi.MidiDevice.Info;
+
 import lejos.pc.comm.NXTInfo;
 
 public class NXTConnection implements Runnable, NxtPcConnection
@@ -16,6 +18,7 @@ public class NXTConnection implements Runnable, NxtPcConnection
 	private DataInputStream dataIn;
 	private Vector<String> receive;
 	private boolean working;
+	private int count = 0;
 
 	public NXTConnection(NXTInfo info, OutputStream out, InputStream in)
 	{
@@ -33,6 +36,7 @@ public class NXTConnection implements Runnable, NxtPcConnection
 
 	public boolean sendData(String s)
 	{
+		System.out.println(s);
 		try
 		{
 			dataOut.writeUTF(s);

@@ -4,7 +4,7 @@ import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
-import robotica.Agent;
+import standard.Agent;
 import robotica.CompletedTask;
 import robotica.CoupledState;
 import robotica.SimState;
@@ -42,9 +42,11 @@ public class Waiter extends Agent
 				"OPNEMEN_BESTELLING"));
 		this.addCoupledState(new CoupledState("IDLE", "WETEN",
 				"BRENG_VOEDSEL_NAAR_KLANT"));
-		
-		//this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
-		//this.setChanged();
+		this.addCoupledState(new CoupledState("IDLE", "WBETALEN",
+				"BRENG_REKENING"));
+
+		// this.setState(new SimState("OPNEMEN_BESTELLING", "KLANT 1"));
+		// this.setChanged();
 
 		/*
 		 * this.setState(new SimState("BRENG_VOEDSEL_NAAR_KLANT", "KLANT 1"));
@@ -87,34 +89,40 @@ public class Waiter extends Agent
 
 		Motor.A.suspendRegulation();
 		Motor.B.suspendRegulation();
-		Motor.C.suspendRegulation();
-		
-		if (!currentState().name().equals("IDLE"))
-		{
-			this.setState(new SimState("IDLE"));
-			this.setChanged();
-		}
+		openGrabber();
+		//Motor.C.suspendRegulation();
 	}
 
 	@Override
 	public void update()
 	{
 		State state = this.currentState();
-
+		
 		if (richting == -1 && !state.name().equals("IDLE"))
 			checkRichting();
+		
+		boolean stateRequest = false;
+		
 
 		switch (state.name())
 		{
 		case "IDLE":
-			//reset();
+			reset();
+			
+			this.setRequestNewState(true);
+			this.setChanged();
+			stateRequest = true;
 			break;
 		case "OPNEMEN_BESTELLING":
+			if(cookHasFood)
+			{
+				this.setState(new SimState("IDLE"));
+			}
 			if (currentStep == 0)
 				zoekKlant();
 			else if (currentStep == 1)
 			{
-				openGrabber();
+				//openGrabber();
 				currentStep++;
 			} else if (currentStep == 2)
 				rijNaarKlant();
@@ -134,7 +142,6 @@ public class Waiter extends Agent
 			else if (currentStep == 7)
 			{
 				openGrabber();
-				hasBall = false;
 				moveBack = true;
 				currentStep++;
 
@@ -147,10 +154,18 @@ public class Waiter extends Agent
 			} else if (currentStep == 9)
 			{
 				reset();
+				this.setState(new SimState("IDLE"));
+				this.setChanged();
 			}
 			break;
 
 		case "BRENG_VOEDSEL_NAAR_KLANT":
+			
+			if(!cookHasFood && !hasBall)
+			{
+				this.setState(new SimState("IDLE"));
+			}
+			
 			if (currentStep == 0)
 				zoekKok();
 			else if (currentStep == 1)
@@ -163,7 +178,8 @@ public class Waiter extends Agent
 			{
 				closeGrabber();
 				cookHasFood = false;
-				this.addCompletedTask(new CompletedTask("BESTELLING_OPGEHAALD", "KOK"));
+				this.addCompletedTask(new CompletedTask("BESTELLING_OPGEHAALD",
+						"KOK"));
 				hasBall = true;
 				moveBack = true;
 				currentStep++;
@@ -176,8 +192,8 @@ public class Waiter extends Agent
 			else if (currentStep == 7)
 			{
 				openGrabber();
-				this.addCompletedTask(new CompletedTask("ETEN_BEZORGD", this.currentState().target()));
-				hasBall = false;
+				this.addCompletedTask(new CompletedTask("ETEN_BEZORGD", this
+						.currentState().target()));
 				moveBack = true;
 				currentStep++;
 			} else if (currentStep == 8)
@@ -186,12 +202,33 @@ public class Waiter extends Agent
 			} else if (currentStep == 9)
 			{
 				reset();
+				this.setState(new SimState("IDLE"));
+				this.setChanged();
 			}
 			break;
+		case "BRENG_REKENING":
+			System.out.println("Breng rekening naar"+currentState().target());
+			try
+			{
+				Thread.sleep(3000);
+			} catch (InterruptedException e)
+			{
+			}
+			
+			break;
 		}
-		
-		
+
+		this.updateState();
 		notifyObservers();
+		
+		try
+		{
+			if(stateRequest)
+			Thread.sleep(4000);
+			System.out.println("req send, wait 4s");
+		} catch (InterruptedException e)
+		{
+		}
 	}
 
 	private boolean onColor(int num, boolean safe)
@@ -303,14 +340,13 @@ public class Waiter extends Agent
 
 	private void zoekKok()
 	{
-		if (currentCustomer == -1)
+		if (currentState().hasTarget())
 		{
-
 			if (currentState().target().equalsIgnoreCase("KLANT 1"))
 				currentCustomer = custColor[0];
-			if (currentState().target().equalsIgnoreCase("KLANT 2"))
+			else if (currentState().target().equalsIgnoreCase("KLANT 2"))
 				currentCustomer = custColor[1];
-			if (currentState().target().equalsIgnoreCase("KLANT 3"))
+			else if (currentState().target().equalsIgnoreCase("KLANT 3"))
 				currentCustomer = custColor[2];
 		}
 
@@ -325,13 +361,13 @@ public class Waiter extends Agent
 
 	private void zoekKlant()
 	{
-		if (currentCustomer == -1)
+		if (currentState().hasTarget())
 		{
 			if (currentState().target().equalsIgnoreCase("KLANT 1"))
 				currentCustomer = custColor[0];
-			if (currentState().target().equalsIgnoreCase("KLANT 2"))
+			else if (currentState().target().equalsIgnoreCase("KLANT 2"))
 				currentCustomer = custColor[1];
-			if (currentState().target().equalsIgnoreCase("KLANT 3"))
+			else if (currentState().target().equalsIgnoreCase("KLANT 3"))
 				currentCustomer = custColor[2];
 		}
 
@@ -417,6 +453,7 @@ public class Waiter extends Agent
 			Motor.A.stop();
 			Motor.B.stop();
 			richting = -1;
+			first = -1;
 
 		}
 
@@ -492,7 +529,7 @@ public class Waiter extends Agent
 	{
 		Motor.A.stop();
 		Motor.B.stop();
-		Motor.C.rotateTo(80);
+		Motor.C.rotateTo(68);
 		Motor.C.stop();
 	}
 
@@ -500,10 +537,10 @@ public class Waiter extends Agent
 	{
 		Motor.A.stop();
 		Motor.B.stop();
-		Motor.C.rotateTo(0);
+		Motor.C.rotateTo(4);
 		Motor.C.stop();
 	}
-	
+
 	public void processCompletedTask(String task)
 	{
 		System.out.println(task);

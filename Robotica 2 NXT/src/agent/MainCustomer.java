@@ -26,11 +26,11 @@ public class MainCustomer
 		com.observe(cus);
 		
 		
-		cus= new Customer (Motor.B, "Klant 2");
+		cus= new Customer (Motor.C, "Klant 2");
 		col.addAgent(cus);
 		com.observe(cus);
 		
-		cus= new Customer (Motor.C, "Klant 3");
+		cus= new Customer (Motor.B, "Klant 3");
 		col.addAgent(cus);
 		com.observe(cus);
 
