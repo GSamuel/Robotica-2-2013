@@ -70,8 +70,8 @@ public class Waiter extends Agent
 
 		currentStep = 0;
 
-		Motor.C.setSpeed(100);
-		Motor.C.rotateTo(-360);
+		Motor.C.setSpeed(60);
+		Motor.C.rotateTo(-180);
 		Motor.C.resetTachoCount();
 
 		closeGrabber();
@@ -117,8 +117,7 @@ public class Waiter extends Agent
 			if (cookHasFood)
 			{
 				this.setState(new SimState("IDLE"));
-			}
-			if (currentStep == 0)
+			} else if (currentStep == 0)
 				zoekKlant();
 			else if (currentStep == 1)
 			{
@@ -165,10 +164,8 @@ public class Waiter extends Agent
 			{
 				this.setState(new SimState("IDLE"));
 			} else
-
 			if (currentStep == 0)
 			{
-				this.addCompletedTask(new CompletedTask("BRENG_AFWAS", "KOK"));
 				zoekKok();
 			} else if (currentStep == 1)
 			{
@@ -212,16 +209,21 @@ public class Waiter extends Agent
 			if (cookHasFood || cookIsPreparingFood)
 			{
 				this.setState(new SimState("IDLE"));
-			}
-			if (currentStep == 0)
+			} else 
+				
+			if(currentStep == 0)
+			{
+				this.addCompletedTask(new CompletedTask("BRENG_AFWAS", "KOK"));
+				currentStep++;
+			}if (currentStep == 1)
 				zoekKlant();
-			else if (currentStep == 1)
+			else if (currentStep == 2)
 			{
 				openGrabber();
 				currentStep++;
-			} else if (currentStep == 2)
+			} else if (currentStep == 3)
 				rijNaarKlant();
-			else if (currentStep == 3)
+			else if (currentStep == 4)
 			{
 				closeGrabber();
 				this.addCompletedTask(new CompletedTask("BETALING_AFGEROND",
@@ -230,13 +232,13 @@ public class Waiter extends Agent
 				hasBall = true;
 				moveBack = true;
 				currentStep++;
-			} else if (currentStep == 4)
+			} else if (currentStep == 5)
 				rijNaarBaan(true);
-			else if (currentStep == 5)
-				zoekKok();
 			else if (currentStep == 6)
-				rijNaarKok();
+				zoekKok();
 			else if (currentStep == 7)
+				rijNaarKok();
+			else if (currentStep == 8)
 			{
 				openGrabber();
 				hasBall = false;
@@ -245,10 +247,10 @@ public class Waiter extends Agent
 
 				this.addCompletedTask(new CompletedTask("AFWAS_GEBRACHT", "KOK"));
 				this.setChanged();
-			} else if (currentStep == 8)
+			} else if (currentStep == 9)
 			{
 				rijNaarBaan(false);
-			} else if (currentStep == 9)
+			} else if (currentStep == 10)
 			{
 				reset();
 				this.setState(new SimState("IDLE"));
@@ -363,13 +365,13 @@ public class Waiter extends Agent
 				&& richting == 2)
 		{
 			Motor.A.setSpeed(200);
-			Motor.B.setSpeed(180);
+			Motor.B.setSpeed(160);
 			Motor.A.forward();
 			Motor.B.backward();
 		} else if (onColor(fieldColor) && richting == 1 || onColor(pathOuter)
 				&& richting == 2)
 		{
-			Motor.A.setSpeed(180);
+			Motor.A.setSpeed(160);
 			Motor.B.setSpeed(200);
 			Motor.A.backward();
 			Motor.B.forward();
@@ -486,7 +488,7 @@ public class Waiter extends Agent
 			else
 				forward(1000);
 			turnNineTeen(true);
-			forward(300);
+			forward(240);
 			currentStep++;
 
 			Motor.A.stop();

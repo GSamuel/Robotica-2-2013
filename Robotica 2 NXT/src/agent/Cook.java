@@ -63,11 +63,12 @@ public class Cook extends Agent
 			if(recycleFood == true)
 			{
 				System.out.println("RECYCLEVOEDSEL");
-				this.setState(new SimState("MAAKVOEDSEL"));
+				this.setState(new SimState("RECYCLEVOEDSEL"));
+				//this.addCompletedTask(new CompletedTask("", ""));
 				this.setChanged();
 			}
 			
-			if(amountOfFood > 0 && !ligtBal[3] && !afwasWordtGebracht)
+			if(amountOfFood > 0 && !ligtBal[3] && !afwasWordtGebracht && recycleFood == false)
 			{
 				System.out.println("MAAKVOEDSEL");
 				this.setState(new SimState("MAAKVOEDSEL"));
@@ -208,7 +209,9 @@ public class Cook extends Agent
 		switch (task)
 		{
 		case "BESTELLING_AFGELEVERD":
-			System.out.println("Besetlling afgeleverd");
+			System.out.println("Bestelling afgeleverd");
+			if(ligtBal[3])
+				this.addCompletedTask(new CompletedTask("FOOD_READY", "OBER"));
 			amountOfFood ++;
 			break;
 		case "BESTELLING_OPGEHAALD":
@@ -224,8 +227,8 @@ public class Cook extends Agent
 			afwasWordtGebracht = true;
 			break;
 		case "AFWAS_GEBRACHT":
-			afwasWordtGebracht = false;
 			recycleFood = true;
+			afwasWordtGebracht = false;
 			break;
 		}
 	}
