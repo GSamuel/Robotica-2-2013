@@ -13,6 +13,9 @@ public class Cook extends Agent
 	private TouchSens touch;
 	private boolean ligtBal[] = { true, true, true, false};
 	private final int position[] = { 11000, 6850, -9500, 0 };
+	
+	private boolean afwasWordtGebracht = false;
+	private boolean recycleFood = false;
 
 	public Cook()
 	{
@@ -37,6 +40,8 @@ public class Cook extends Agent
 		ligtBal[1] = true;
 		ligtBal[2] = true;
 		ligtBal[3] = false;
+		afwasWordtGebracht = false;
+		recycleFood = false;
 		amountOfFood = 0;
 		this.setState(new SimState("IDLE"));
 		this.setChanged();
@@ -53,12 +58,20 @@ public class Cook extends Agent
 			Motor.C.setSpeed(720);
 			Motor.A.rotateTo(0);
 			Motor.B.rotateTo(0);
-			Motor.C.rotateTo(0);			
+			Motor.C.rotateTo(0);
 			
-			if(amountOfFood > 0 && !ligtBal[3])
+			if(recycleFood == true)
+			{
+				System.out.println("RECYCLEVOEDSEL");
+				this.setState(new SimState("MAAKVOEDSEL"));
+				this.setChanged();
+			}
+			
+			if(amountOfFood > 0 && !ligtBal[3] && !afwasWordtGebracht)
 			{
 				System.out.println("MAAKVOEDSEL");
 				this.setState(new SimState("MAAKVOEDSEL"));
+				this.addCompletedTask(new CompletedTask("PREPARING_FOOD", "OBER"));
 				this.setChanged();
 				amountOfFood --;
 			}
@@ -90,16 +103,14 @@ public class Cook extends Agent
 			Motor.A.setSpeed(720);
 			Motor.B.setSpeed(150);
 			Motor.C.setSpeed(720);
-			// System.out.println(ligtBal[0]+" "+ligtBal[1]+" "+ligtBal[2]+" "+ligtBal[3]);
 			if (ligtBal[3])
 			{
 				for (int i = 0; i < 3; i++)
 					if (!ligtBal[i] && ligtBal[3])
 						verleg(i, false);
 			}
-			// System.out.println(ligtBal[0]+" "+ligtBal[1]+" "+ligtBal[2]+" "+ligtBal[3]);
-
-			this.setState(new SimState("STOP"));
+			recycleFood = false;
+			this.setState(new SimState("IDLE"));
 			setChanged();
 			break;
 		case "TEST":
@@ -208,6 +219,13 @@ public class Cook extends Agent
 				System.out.println("er was geen bestelling");
 			
 			ligtBal[3] = false;
+			break;
+		case "BRENG_AFWAS":
+			afwasWordtGebracht = true;
+			break;
+		case "AFWAS_GEBRACHT":
+			afwasWordtGebracht = false;
+			recycleFood = true;
 			break;
 		}
 	}

@@ -21,7 +21,8 @@ public class CustomerBehavior {
 
 
 	public int eten() {
-			return 1000 * randInt(20 * wachttijd, 40 * wachttijd);
+		return 8000;
+			//return 1000 * randInt(20 * wachttijd, 40 * wachttijd);
 	}
 
 

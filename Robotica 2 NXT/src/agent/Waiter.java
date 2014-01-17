@@ -27,6 +27,7 @@ public class Waiter extends Agent
 	private boolean turn = false;
 	private boolean moveBack = true;
 	private boolean cookHasFood = false;
+	private boolean cookIsPreparingFood = false;
 
 	private final int[] custColor = { 1, 2, 3 };
 	private final int cookColor = 4;
@@ -90,31 +91,30 @@ public class Waiter extends Agent
 		Motor.A.suspendRegulation();
 		Motor.B.suspendRegulation();
 		openGrabber();
-		//Motor.C.suspendRegulation();
+		// Motor.C.suspendRegulation();
 	}
 
 	@Override
 	public void update()
 	{
 		State state = this.currentState();
-		
+
 		if (richting == -1 && !state.name().equals("IDLE"))
 			checkRichting();
-		
+
 		boolean stateRequest = false;
-		
 
 		switch (state.name())
 		{
 		case "IDLE":
 			reset();
-			
+
 			this.setRequestNewState(true);
 			this.setChanged();
 			stateRequest = true;
 			break;
 		case "OPNEMEN_BESTELLING":
-			if(cookHasFood)
+			if (cookHasFood)
 			{
 				this.setState(new SimState("IDLE"));
 			}
@@ -122,7 +122,7 @@ public class Waiter extends Agent
 				zoekKlant();
 			else if (currentStep == 1)
 			{
-				//openGrabber();
+				// openGrabber();
 				currentStep++;
 			} else if (currentStep == 2)
 				rijNaarKlant();
@@ -160,15 +160,17 @@ public class Waiter extends Agent
 			break;
 
 		case "BRENG_VOEDSEL_NAAR_KLANT":
-			
-			if(!cookHasFood && !hasBall)
+
+			if (!cookHasFood && !hasBall)
 			{
 				this.setState(new SimState("IDLE"));
-			}
-			
+			} else
+
 			if (currentStep == 0)
+			{
+				this.addCompletedTask(new CompletedTask("BRENG_AFWAS", "KOK"));
 				zoekKok();
-			else if (currentStep == 1)
+			} else if (currentStep == 1)
 			{
 				openGrabber();
 				currentStep++;
@@ -207,7 +209,7 @@ public class Waiter extends Agent
 			}
 			break;
 		case "BRENG_REKENING":
-			if(cookHasFood)
+			if (cookHasFood || cookIsPreparingFood)
 			{
 				this.setState(new SimState("IDLE"));
 			}
@@ -241,8 +243,7 @@ public class Waiter extends Agent
 				moveBack = true;
 				currentStep++;
 
-				this.addCompletedTask(new CompletedTask(
-						"AFWAS_GEBRACHT", "KOK"));
+				this.addCompletedTask(new CompletedTask("AFWAS_GEBRACHT", "KOK"));
 				this.setChanged();
 			} else if (currentStep == 8)
 			{
@@ -258,11 +259,11 @@ public class Waiter extends Agent
 
 		this.updateState();
 		notifyObservers();
-		
+
 		try
 		{
-			if(stateRequest)
-			Thread.sleep(4000);
+			if (stateRequest)
+				Thread.sleep(4000);
 			System.out.println("req send, wait 4s");
 		} catch (InterruptedException e)
 		{
@@ -362,13 +363,13 @@ public class Waiter extends Agent
 				&& richting == 2)
 		{
 			Motor.A.setSpeed(200);
-			Motor.B.setSpeed(200);
+			Motor.B.setSpeed(180);
 			Motor.A.forward();
 			Motor.B.backward();
 		} else if (onColor(fieldColor) && richting == 1 || onColor(pathOuter)
 				&& richting == 2)
 		{
-			Motor.A.setSpeed(200);
+			Motor.A.setSpeed(180);
 			Motor.B.setSpeed(200);
 			Motor.A.backward();
 			Motor.B.forward();
@@ -440,7 +441,7 @@ public class Waiter extends Agent
 			Motor.B.setSpeed(200);
 		} else if (onColor(fieldColor))
 		{
-			Motor.A.setSpeed(220);
+			Motor.A.setSpeed(240);
 			Motor.B.setSpeed(20);
 		}
 
@@ -586,6 +587,10 @@ public class Waiter extends Agent
 		{
 		case "FOOD_READY":
 			cookHasFood = true;
+			cookIsPreparingFood = false;
+			break;
+		case "PREPARING_FOOD":
+			cookIsPreparingFood = true;
 			break;
 		}
 	}

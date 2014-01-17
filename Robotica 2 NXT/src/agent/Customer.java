@@ -155,6 +155,7 @@ public class Customer extends Agent
 			int lol = motor.getTachoCount() / 360;
 			motor.rotateTo(lol * 360);
 			motor.resetTachoCount();
+			rotating = false;
 		}
 	}
 
@@ -180,6 +181,7 @@ public class Customer extends Agent
 		case "BETALING_AFGEROND":
 			if (this.currentState().name().equals("WBETALEN"))
 			{
+				motor.rotateTo(0);
 				this.setState(new SimState("STOP"));
 				this.setChanged();
 			}

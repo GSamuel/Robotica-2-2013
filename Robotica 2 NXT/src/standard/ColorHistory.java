@@ -12,7 +12,7 @@ public class ColorHistory implements Runnable
 	public ColorHistory(SensorPort sp)
 	{
 		color = new ColorHTSensor(sp);
-		colorArray = new int[15];
+		colorArray = new int[20];
 		colorID = new int[15];
 	}
 
